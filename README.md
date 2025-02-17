@@ -22,20 +22,20 @@ python update_local.py /path/to/files
 ```
 
 This will:
-Scan the specified directory for raw, processed, and summarized files.
-Extract metadata and associate it with the respective files.
-Generate an RO-Crate package for structured data storage.
-Create JSON and HTML reports summarizing the processed data.
+- Scan the specified directory for raw, processed, and summarized files.
+- Extract metadata and associate it with the respective files.
+- Generate an RO-Crate package for structured data storage.
+- Create JSON and HTML reports summarizing the processed data.
 
 ## Requirements
 
-Python 3.x
-RO-Crate Python library
-JSON and OS modules (included in Python standard library)
+- Python 3.x
+- RO-Crate Python library
+- JSON and OS modules (included in Python standard library)
 
 ## Future Improvements
 
-Implement logging for better debugging and error tracking.
-Add a configuration file to customize parameters dynamically.
-Enable parallel processing to handle large datasets efficiently.
-Expand metadata handling to support additional research data formats.
+- Implement logging for better debugging and error tracking.
+- Add a configuration file to customize parameters dynamically.
+- Enable parallel processing to handle large datasets efficiently.
+- Expand metadata handling to support additional research data formats.
