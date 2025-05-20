@@ -10,8 +10,8 @@ This project automates the organization and metadata enrichment of research file
 - `files/` – Directory containing research data categorized as raw, processed, or summarized.
 - `generate_html.py` – Converts the structured JSON summary into an HTML report.
 - `params.py` – Stores configurable parameters such as metadata paths and file types.
-- `sample_metadata.py` – Manages metadata for research files.
-- `update_local.py` – Main script responsible for scanning, processing, and organizing files into an RO-Crate package.
+- `sample_metadata.py` – Manages metadata for research files (inside the `files/` folder).
+- `update_local_v1.py` – Main script responsible for scanning, processing, and organizing files into an RO-Crate package.
 
 ## Usage
 
@@ -32,6 +32,8 @@ This will:
 - Python 3.x
 - RO-Crate Python library
 - JSON and OS modules (included in Python standard library)
+- Pandas
+- Numpy
 
 ## Pros & Cons of the Implementation
 
