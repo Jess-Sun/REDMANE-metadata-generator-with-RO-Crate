@@ -19,7 +19,7 @@ This project automates the organization and metadata enrichment of research file
 To run the script, use the following command:
 
 ```bash
-python update_local.py /path/to/files
+python update_local_v1.py /path/to/files
 ```
 
 This will:
