@@ -1,5 +1,5 @@
 # REDMANE-metadata-generator-with-RO-Crate
-*Created by REDMANE Data Ingestion Team Summer 2025*
+*Created by REDMANE Data Ingestion Team Summer 2025*\n
 *Updated by REDMANE Data Ingestion Team 2025 sem1*
 
 ## Overview
