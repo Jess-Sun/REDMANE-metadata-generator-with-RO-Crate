@@ -6,4 +6,4 @@ This folder contains metadata and sample-to-patient documents. All of the files 
 
 3. sample_to_patient.json: This file provide the mapping information between samples and patients. Key is sample and value is patient.
 
-4. mimic_rawfiles_generator: Script for updating the metadata made by previous intake and generating the counts.csv files.
+4. mimic_rawfiles_generator: Script for updating the metadata made by previous intake and generating the counts.csv files. (When running this script in your environment, remember to change the file path)
