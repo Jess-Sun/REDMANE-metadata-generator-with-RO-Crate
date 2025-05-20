@@ -43,16 +43,18 @@ This will:
 1. **Better Metadata Integration**  
    - The script loads metadata once using `load_metadata(file_path)` and stores it in a dictionary (`metadata_dict`) with **Patient ID** as the key.  
    - This approach allows for efficient lookups when processing files, reducing redundant operations.
+   - The script also loads the mapping information between samples and patients `load_sample_tb(file_path)` and stores it in a dictionary.
 
 2. **RO-Crate Support**  
    - The integration of **RO-Crate** ensures that the dataset is well-structured and adheres to **FAIR principles** (Findable, Accessible, Interoperable, Reusable).  
    - This standardization enhances data discoverability and facilitates better research data management.
 
 3. **More Efficient File Processing**  
-   - The function `process_files_for_category()` streamlines file processing by:  
+   - The function `process_files_for_raw()`, `process_files_for_summarized()`, `process_files_for_processed()` streamlines file processing by:  
      - Scanning for files  
      - Retrieving metadata  
-     - Registering files in the **RO-Crate**  
+     - Registering files in the **RO-Crate**
+     - Tailored function for different data types
    - Performing these tasks in a single step improves efficiency.
 
 4. **More Robust Error Handling**  
