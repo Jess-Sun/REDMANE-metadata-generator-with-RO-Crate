@@ -1,5 +1,6 @@
 # REDMANE-metadata-generator-with-RO-Crate
-*By REDMANE Data Ingestion Team Summer 2025*
+*Created by REDMANE Data Ingestion Team Summer 2025*\n
+*Updated by REDMANE Data Ingestion Team 2025 sem1*
 
 ## Overview
 
@@ -10,15 +11,15 @@ This project automates the organization and metadata enrichment of research file
 - `files/` – Directory containing research data categorized as raw, processed, or summarized.
 - `generate_html.py` – Converts the structured JSON summary into an HTML report.
 - `params.py` – Stores configurable parameters such as metadata paths and file types.
-- `sample_metadata.py` – Manages metadata for research files.
-- `update_local.py` – Main script responsible for scanning, processing, and organizing files into an RO-Crate package.
+- `sample_metadata/` – All of the metadata and relevant necessary files are stored in this folder.
+- `update_local_v1.py` – Main script responsible for scanning, processing, and organizing files into an RO-Crate package.
 
 ## Usage
 
 To run the script, use the following command:
 
 ```bash
-python update_local.py /path/to/files
+python update_local_v1.py /path/to/files
 ```
 
 This will:
@@ -32,6 +33,8 @@ This will:
 - Python 3.x
 - RO-Crate Python library
 - JSON and OS modules (included in Python standard library)
+- Pandas
+- Numpy
 
 ## Pros & Cons of the Implementation
 
@@ -40,16 +43,18 @@ This will:
 1. **Better Metadata Integration**  
    - The script loads metadata once using `load_metadata(file_path)` and stores it in a dictionary (`metadata_dict`) with **Patient ID** as the key.  
    - This approach allows for efficient lookups when processing files, reducing redundant operations.
+   - The script also loads the mapping information between samples and patients `load_sample_tb(file_path)` and stores it in a dictionary.
 
 2. **RO-Crate Support**  
    - The integration of **RO-Crate** ensures that the dataset is well-structured and adheres to **FAIR principles** (Findable, Accessible, Interoperable, Reusable).  
    - This standardization enhances data discoverability and facilitates better research data management.
 
 3. **More Efficient File Processing**  
-   - The function `process_files_for_category()` streamlines file processing by:  
+   - The function `process_files_for_raw()`, `process_files_for_summarized()`, `process_files_for_processed()` streamlines file processing by:  
      - Scanning for files  
      - Retrieving metadata  
-     - Registering files in the **RO-Crate**  
+     - Registering files in the **RO-Crate**
+     - Tailored function for different data types
    - Performing these tasks in a single step improves efficiency.
 
 4. **More Robust Error Handling**  
