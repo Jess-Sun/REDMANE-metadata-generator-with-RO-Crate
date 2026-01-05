@@ -60,12 +60,12 @@ def filter_files(directory):
 
     for root, _, files in os.walk(directory):
         for file in files:
-            ext = os.path.splitext(file)[1].lower()
+            ext = Path(file).suffix.lower()
             bucket = bucket_by_ext.get(ext)
 
             if bucket is None:
                 continue
-            full_path = os.path.join(root, file)
+            full_path = Path(root) / file
             file_dict[bucket].append(full_path)
 
     for bucket, files in file_dict.items():
@@ -73,6 +73,38 @@ def filter_files(directory):
             print(f" | No files found for {bucket} file types")
          
     return file_dict
+
+def process_files(directory, file_dict, file_type, organization, cor_dict):
+    
+    file_list = []
+    for full_path in file_dict[file_type]:
+
+        relative_path = full_path.relative_to(directory)
+        file_path = f"./{relative_path.as_posix()}"
+        file_size = round(os.path.getsize(full_path) / CONVERT_FROM_BYTES)
+        total_size += file_size
+        file_name = Path(full_path).name
+        sample_name = Path(full_path).stem
+
+        # establish file name
+        metadata_dict = {
+            "file_name": file_name,
+            "file_size": file_size, 
+            "patient_id": cor_dict.get(sample_name, ""),
+            "sample_id": sample_name,
+            "directory": file_path,
+            "organization": organization
+        }
+        # print("Processing the Raw files")
+        print(f" | {file_path}  ~{file_size}{FILE_SIZE_UNIT}")
+
+        # check here to prevent duplicates
+        if metadata_dict not in file_list:
+            file_list.append(file_dict)
+
+    print(f" | Total size for these files: {total_size}{FILE_SIZE_UNIT}")
+                        
+    return file_list
 
 def process_files_for_raw(directory, file_types, organization, cor_dict):
     """   
