@@ -25,6 +25,54 @@ def load_sample_tb(file_path):
         data = json.load(f)
     return data
 
+with open("config.json", "r") as f:
+    config = json.load(f)
+
+def filter_files(directory):
+    """   
+    Recursively scans the given directory for raw data files whose names end with one of the specified file_types.
+    Each found file has the fullpath appended to the relevant list.
+    
+    Args:
+        directory (str): The directory to search.
+        raw (list): List of raw file extensions to match.
+    
+    Returns:
+        tuple: A tuple of lists containing the full paths for raw, processed and summarised files respectively.
+    """    
+    bucket_by_ext = {}
+
+    for ext in config["raw_file_types"]:
+        bucket_by_ext[ext.lower()] = "raw"
+
+    for ext in config["processed_file_types"]:
+        bucket_by_ext[ext.lower()] = "processed"
+
+    for ext in config["summarised_file_types"]:
+        bucket_by_ext[ext.lower()] = "summarised"
+
+    file_dict = {
+        bucket.replace("_file_types", ""): []
+        for bucket in config
+    }
+
+    # file_dict = {"raw":[], "processed":[], "summarised":[]}
+
+    for root, _, files in os.walk(directory):
+        for file in files:
+            ext = os.path.splitext(file)[1].lower()
+            bucket = bucket_by_ext.get(ext)
+
+            if bucket is None:
+                continue
+            full_path = os.path.join(root, file)
+            file_dict[bucket].append(full_path)
+
+    for bucket, files in file_dict.items():
+        if not files:
+            print(f" | No files found for {bucket} file types")
+         
+    return file_dict
 
 def process_files_for_raw(directory, file_types, organization, cor_dict):
     """   
@@ -35,8 +83,6 @@ def process_files_for_raw(directory, file_types, organization, cor_dict):
     Args:
         directory (str): The directory to search.
         file_types (list): List of file extensions to match.
-        metadata_dict (dict): Dictionary mapping "Patient ID" to metadata entries.
-        crate (ROCrate): The RO‑Crate instance in which to register files.
         organization (str): Organization that the data files are from, can be modified in params.py
         cor_dict: The dictionary containing the keys as sample_id and values as patient_id
     
@@ -81,7 +127,7 @@ def process_files_for_raw(directory, file_types, organization, cor_dict):
 
 
 
-def process_files_for_summarized(directory, file_types, organization, cor_dict):
+def process_files_for_summarised(directory, file_types, organization, cor_dict):
     """   
     Recursively scans the given directory for summary data files whose names end with one of the specified file_types.
     Each found file is registered in the RO‑Crate with enriched properties.
@@ -120,7 +166,7 @@ def process_files_for_summarized(directory, file_types, organization, cor_dict):
                         "directory": file_path,
                         "organization": organization
                     }
-                    # print("Processing the Summarized files")
+                    # print("Processing the summarised files")
                     print(f" | {file_path}  ~{file_size}{FILE_SIZE_UNIT}")
 
                     # check here to prevent duplpicates
@@ -238,7 +284,7 @@ def generate_json(directory, output_file):
     processed_files = process_files_for_processed(directory, PROCESSED_FILE_TYPES, organization, cor_dict)
     
     print(f"\nProcessing summarised files ({', '.join(SUMMARISED_FILE_TYPES)})")
-    summarised_files = process_files_for_summarized(directory, SUMMARISED_FILE_TYPES, organization, cor_dict)
+    summarised_files = process_files_for_summarised(directory, SUMMARISED_FILE_TYPES, organization, cor_dict)
     
     # Build the final output structure.
     output_data = {
