@@ -10,8 +10,7 @@ import numpy as np
 
 
 
-
-def load_sample_tb(file_path):
+def load_json(file_path):
     """
     Loads the JSON file including the pairs of samples and corresponding patients and return a dictionary.
     The keys are sample_id and values are patient_id in this dictionary.
@@ -26,10 +25,8 @@ def load_sample_tb(file_path):
         data = json.load(f)
     return data
 
-with open("config.json", "r") as f:
-    config = json.load(f)
 
-def filter_files(directory):
+def filter_files(directory, config):
     """   
     Recursively scans the given directory for raw data files whose names end with one of the specified file_types.
     Each found file has the fullpath appended to the relevant list.
@@ -39,7 +36,7 @@ def filter_files(directory):
         raw (list): List of raw file extensions to match.
     
     Returns:
-        tuple: A tuple of lists containing the full paths for raw, processed and summarised files respectively.
+        dictionary: A dictionary of lists containing the full paths for raw, processed and summarised files respectively.
     """    
     bucket_by_ext = {}
 
@@ -76,9 +73,26 @@ def filter_files(directory):
     return file_path_dict
 
 def process_files(directory, file_path_dict, file_type, organization, cor_dict):
-    print(f"Processing the {file_type} files")
+    """   
+    Derives relative path, file size, file name, sample name.
+    Maps patient id to sample id.
+    Writes above information into dictionary for each file.
+    
+    Args:
+        directory (str): The directory to create relative path with
+        file_path_dict (dict): Dictionary containing raw, processed, summarised as keys and file paths as values
+        file_type (str): Specifies either raw, processed or summarised
+        organization (str): Organization that the data files are from, can be modified in params.py
+        cor_dict: The dictionary containing the keys as sample_id and values as patient_id
+    
+    Returns:
+        list: A list of dictionaries summarising the file details.
+    """
+
     file_list = []
     total_size = 0
+    print(f"Processing the {file_type} files")
+
     for full_path in file_path_dict[file_type]:
 
         relative_path = full_path.relative_to(directory)
@@ -119,29 +133,31 @@ def generate_json(directory, output_file):
         directory (str): The directory to analyze.
         output_file (str): The path where the JSON output will be saved.
     """
-    if not os.path.isdir(directory):
+    if not directory.is_dir():
         raise ValueError(f"The specified path '{directory}' is not a valid directory.")
     
   
     # Load metadata from the provided metadata file.
-    cor_dict = load_sample_tb(SAMPLE_TO_PATIENT)
+    config = load_json(directory / "config.json")
+    cor_dict = load_json(directory / "patient_sample_mapping.json")
     organization = ORGANIZATION
 
-    file_path_dict = filter_files(directory)
+    file_path_dict = filter_files(directory, config)
 
     print(f"\nProcessing raw files ({', '.join(RAW_FILE_TYPES)})")
-    raw_files = process_files(target_directory, file_path_dict, "raw", organization, cor_dict) 
+    raw_files = process_files(directory, file_path_dict, "raw", organization, cor_dict) 
 
     print(f"\nProcessing processed files ({', '.join(PROCESSED_FILE_TYPES)})")
-    processed_files = process_files(target_directory, file_path_dict, "processed", organization, cor_dict) 
+    processed_files = process_files(directory, file_path_dict, "processed", organization, cor_dict) 
    
     print(f"\nProcessing summarised files ({', '.join(SUMMARISED_FILE_TYPES)})")
-    summarised_files = process_files_for_summarised(directory, SUMMARISED_FILE_TYPES, organization, cor_dict)
+    summarised_files = process_files(directory, file_path_dict, "summarised", organization, cor_dict)     
+    # summarised_files = process_files_for_summarised(directory, SUMMARISED_FILE_TYPES, organization, cor_dict)
     
     # Build the final output structure.
     output_data = {
         "data": {
-            "location": directory,
+            "location": directory.as_posix(),
             "file_size_unit": FILE_SIZE_UNIT,
             "files": {
                 "raw": raw_files,
@@ -167,13 +183,13 @@ if __name__ == "__main__":
         sys.exit(1)
     
     # The target directory should be the 'files' subfolder.
-    target_directory = sys.argv[1]
+    target_directory = Path(sys.argv[1])
     print(f"\nSearching through {target_directory} .........")
     
     # Determine output file paths relative to the script's directory.
     script_directory = Path(__file__).parent
-    output_file_path = script_directory / OUTPUT_JSON_FILE_NAME
-    output_html_path = script_directory / OUTPUT_HTML_FILE_NAME
+    output_file_path = target_directory / OUTPUT_JSON_FILE_NAME
+    output_html_path = target_directory / OUTPUT_HTML_FILE_NAME
     
     try:
         generate_json(target_directory, output_file_path)

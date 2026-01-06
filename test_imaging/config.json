@@ -1,0 +1,11 @@
+{
+  "raw_file_types": [
+    ".czi"
+  ],
+  "processed_file_types": [
+    ".tif"
+  ],
+  "summarised_file_types": [
+    ".zarr"
+  ]
+}
