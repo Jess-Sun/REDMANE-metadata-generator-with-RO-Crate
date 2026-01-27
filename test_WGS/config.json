@@ -1,11 +1,12 @@
 {
-  "raw_file_types": [
-    ".fastq"
-  ],
-  "processed_file_types": [
-    ".bam"
-  ],
-  "summarised_file_types": [
-    ".vcf"
-  ]
+    "raw_file_extensions": [
+        ".fastq"
+    ],
+    "processed_file_extensions": [
+        ".bam"
+    ],
+    "summarised_file_extensions": [
+        ".vcf"
+    ],
+    "sample_to_patient": {}
 }
