@@ -3,7 +3,17 @@ import json
 import pandas as pd
 from pathlib import Path
 
-def extract_sample_id(filename, extensions):
+def extract_sample_name(filename, extensions):
+    """
+    Extracts the sample name from a filename by stripping known extensions.
+
+    Args:
+        filename (str): The filename including extension.
+        extensions (list): List of known file extensions (e.g., ['.fastq.gz', '.vcf']).
+
+    Returns:
+        str: The extracted sample name.
+    """
     name = filename.lower()
     # Sort extensions by length so .fastq.gz is matched before .gz
     for ext in sorted(extensions, key=len, reverse=True):
@@ -11,7 +21,31 @@ def extract_sample_id(filename, extensions):
             return filename[:-len(ext)]
     return os.path.splitext(filename)[0]
 
-def scan_dataset(data_dir, config, organization):
+def identify_files(data_dir, config, organization):
+    """
+    Scans the directory to identify and categorize files based on configuration.
+
+    This function categorizes files into 'raw', 'processed', or 'summarised' based on
+    extensions defined in the configuration. It also handles mapping sample IDs to
+    patient IDs using `sample_to_patient` from config or a legacy mapping file.
+
+    For 'summarised' files (CSV/TSV/MAF), it attempts to extract linked samples/patients,
+    handling counts matrices (header-based) if `counts_format=True`.
+
+    Args:
+        data_dir (Path): Path to the dataset directory.
+        config (dict): Configuration dictionary containing:
+            - raw_file_extensions (list)
+            - processed_file_extensions (list)
+            - summarised_file_extensions (list)
+            - sample_to_patient (dict)
+        organization (str): Organization name for metadata.
+
+    Returns:
+        tuple:
+            - files_by_category (dict): Keys 'raw', 'processed', 'summarised' with lists of file metadata.
+            - total_size (int): Total size of scanned files in KB.
+    """
     files_by_category = {
         "raw": [],
         "processed": [],
@@ -72,7 +106,7 @@ def scan_dataset(data_dir, config, organization):
         size_kb = round(path.stat().st_size / 1024)
         total_size += size_kb
         
-        sample_id = extract_sample_id(path.name, all_exts)
+        sample_id = extract_sample_name(path.name, all_exts)
         patient_id = sample_map.get(sample_id, "")
         
         s_ids = [sample_id]

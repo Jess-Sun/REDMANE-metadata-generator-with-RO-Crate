@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 from config import validate_config
-from auxiliary import scan_dataset
+from auxiliary import identify_files
 from generate_html import generate_html
 
 ORGANIZATION = "WEHI"
@@ -33,8 +33,15 @@ def main():
         config["counts_format"] = True
         
     # Scan
-    files, size = scan_dataset(data_dir, config, ORGANIZATION)
+    files, size = identify_files(data_dir, config, ORGANIZATION)
     
+    # Verbose logging
+    if args.verbose:
+        n_raw = len(files["raw"])
+        n_proc = len(files["processed"])
+        n_sum = len(files["summarised"])
+        print(f"Found {n_raw} raw files, {n_proc} processed files, {n_sum} summarised files; total size {size} KB.")
+
     # Output
     out_data = {
         "data": {

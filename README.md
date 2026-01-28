@@ -21,7 +21,10 @@ Organise and enrich research files with metadata.
        "sample_to_patient": {"SampleID": "PatientID"}
    }
    ```
+   ```
    *(Note: Aliases like `raw_file_types` are supported with warnings.)*
+
+   **Note**: Users can open `config.json` in their dataset directory to see and adjust the lists of `raw_file_extensions`, `processed_file_extensions`, and `summarised_file_extensions`.
 
 2. Run the script:
    ```bash
