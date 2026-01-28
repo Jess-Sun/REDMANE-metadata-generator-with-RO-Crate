@@ -1,0 +1,16 @@
+{
+  "raw_file_types": [
+    ".fastq",
+    ".fasta"
+  ],
+  "processed_file_types": [
+    ".cram",
+    ".bam"
+  ],
+  "summarised_file_types": [
+    ".vcf",
+    ".maf",
+    ".csv",
+    ".tsv"
+  ]
+}
