@@ -5,7 +5,7 @@ from params import ORGANIZATION
 
 def generate_html_from_json(json_path, html_path):
     """
-    Dummy implementation that creates HTML file from JSON.
+    Generates a Material-UI styled HTML dashboard with sidebar navigation.
     """
     with open(json_path, "r") as f:
         data = json.load(f)
@@ -14,13 +14,13 @@ def generate_html_from_json(json_path, html_path):
     processed_files = data["data"]["files"]["processed"]
     raw_files = data["data"]["files"]["raw"]
     
-    # Generate the complete HTML with CSS
+    # Generate the complete HTML with embedded CSS
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Preview</title>
+    <title>Dashboard - Data Commons</title>
     <style>
         * {{
             margin: 0;
@@ -35,7 +35,94 @@ def generate_html_from_json(json_path, html_path):
             line-height: 1.5;
         }}
         
-        /* Header / AppBar */
+
+        .layout {{
+            display: flex;
+            min-height: 100vh;
+        }}
+        
+        .sidebar {{
+            width: 240px;
+            background-color: #00274D;
+            box-shadow: 0px 8px 10px -5px rgba(0,0,0,0.2), 
+                        0px 16px 24px 2px rgba(0,0,0,0.14), 
+                        0px 6px 30px 5px rgba(0,0,0,0.12);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1200;
+        }}
+        
+        .sidebar-header {{
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);  
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;  
+        }}
+
+        .sidebar-nav {{
+            padding: 8px 0;
+        }}
+        
+        .nav-section {{
+            margin-bottom: 8px;
+        }}
+        
+        .nav-section-title {{
+            padding: 16px 16px 8px 16px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);  
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }}
+        
+        .nav-item {{
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            color: rgba(255, 255, 255, 0.87); 
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+            font-size: 0.85rem;  
+            border-left: 3px solid transparent;
+        }}
+
+        .nav-item:hover {{
+            background-color: rgba(255, 255, 255, 0.08);  
+        }}
+
+        .nav-item.active {{
+            background-color: rgba(33, 150, 243, 0.16);  
+            border-left-color: #42a5f5;  
+            color: #42a5f5;  
+            font-weight: 500;
+        }}
+        
+        .nav-item-icon {{
+            margin-right: 16px;
+            font-size: 20px;
+            min-width: 24px;
+        }}
+        
+        .divider {{
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.12); 
+            margin: 8px 0;
+        }}
+        
+
+        .main-content {{
+            flex: 1;
+            margin-left: 240px;
+            display: flex;
+            flex-direction: column;
+        }}
+
         .app-bar {{
             background-color: #00274D;
             color: white;
@@ -46,6 +133,9 @@ def generate_html_from_json(json_path, html_path):
             display: flex;
             align-items: center;
             justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1100;
         }}
         
         .app-bar h1 {{
@@ -54,14 +144,14 @@ def generate_html_from_json(json_path, html_path):
             letter-spacing: 0.0075em;
         }}
         
-        /* Main Container */
+        /* Container */
         .container {{
             max-width: 1280px;
             margin: 0 auto;
             padding: 32px 24px;
+            width: 100%;
         }}
         
-        /* Paper/Card Component */
         .paper {{
             background-color: #fff;
             border-radius: 4px;
@@ -70,6 +160,7 @@ def generate_html_from_json(json_path, html_path):
                         0px 1px 3px 0px rgba(0,0,0,0.12);
             padding: 16px;
             margin-bottom: 24px;
+            scroll-margin-top: 80px;
         }}
         
         /* Section Headers */
@@ -150,7 +241,6 @@ def generate_html_from_json(json_path, html_path):
         }}
         
         
-        /* Empty State */
         .empty-state {{
             text-align: center;
             padding: 40px;
@@ -163,56 +253,139 @@ def generate_html_from_json(json_path, html_path):
             display: grid;
             gap: 24px;
         }}
+        
+        html {{
+            scroll-behavior: smooth;
+        }}
     </style>
 </head>
 <body>
-    <!-- App Bar / Header -->
-    <div class="app-bar">
-        <h1>Data Preview</h1>
+    <div class="layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span style="font-weight: 500;">Navigation</span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">File Types</div>
+                    <a href="#raw-files" class="nav-item active">
+                        <span>Raw Files</span>
+                    </a>
+                    <a href="#processed-files" class="nav-item">
+                        <span>Processed Files</span>
+                    </a>
+                    <a href="#summarised-files" class="nav-item">
+                        <span>Summarised Files</span>
+                    </a>
+                </div>
+                
+                <hr class="divider">
+                
+                <div class="nav-item" style="cursor: default; flex-direction: column; align-items: flex-start; color: rgba(255, 255, 255, 0.87);">
+                    <div style="margin-bottom: 8px;">
+                        <strong style="color: white;">{len(raw_files)}</strong> Raw Files
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <strong style="color: white;">{len(processed_files)}</strong> Processed Files
+                    </div>
+                    <div>
+                        <strong style="color: white;">{len(summarized_files)}</strong> Summarised Files
+                    </div>
+                </div>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- App Bar / Header -->
+            <header class="app-bar">
+                <h1>Data Preview</h1>
+            </header>
+            
+            <!-- Container -->
+            <main class="container">
+                <!-- Location Information -->
+                <div class="location-box">
+                    <strong>Location:</strong> {escape(data['data']['location'])}
+                </div>
+                
+                <div class="grid-container">
+                    <!-- Raw Files Section -->
+                    <section id="raw-files" class="paper">
+                        <div class="section-header">
+                            <h2 class="section-title">Raw Files</h2>
+                        </div>
+                        <div class="section-subtitle">{len(raw_files)} file(s) found</div>
+                        <div class="table-container">
+                            {generate_table(raw_files, 'raw')}
+                        </div>
+                    </section>
+                    
+                    <!-- Processed Files Section -->
+                    <section id="processed-files" class="paper">
+                        <div class="section-header">
+                            <h2 class="section-title">Processed Files</h2>
+                        </div>
+                        <div class="section-subtitle">{len(processed_files)} file(s) found</div>
+                        <div class="table-container">
+                            {generate_table(processed_files, 'processed')}
+                        </div>
+                    </section>
+                    
+                    <!-- Summarised Files Section -->
+                    <section id="summarised-files" class="paper">
+                        <div class="section-header">
+                            <h2 class="section-title">Summarised Files</h2>
+                        </div>
+                        <div class="section-subtitle">{len(summarized_files)} file(s) found</div>
+                        <div class="table-container">
+                            {generate_table(summarized_files, 'summarised')}
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
     </div>
     
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Location Information -->
-        <div class="location-box">
-            <strong>Location:</strong> {escape(data['data']['location'])}
-        </div>
-        
-        <div class="grid-container">
-            <!-- Raw Files Section -->
-            <div class="paper">
-                <div class="section-header">
-                    <h2 class="section-title">Raw Files</h2>
-                </div>
-                <div class="section-subtitle">{len(raw_files)} file(s) found</div>
-                <div class="table-container">
-                    {generate_table(raw_files, 'raw')}
-                </div>
-            </div>
+    <script>
+        // Handle navigation highlighting
+        document.addEventListener('DOMContentLoaded', function() {{
+            const navItems = document.querySelectorAll('.nav-item[href^="#"]');
+            const sections = document.querySelectorAll('section[id]');
             
-            <!-- Processed Files Section -->
-            <div class="paper">
-                <div class="section-header">
-                    <h2 class="section-title">Processed Files</h2>
-                </div>
-                <div class="section-subtitle">{len(processed_files)} file(s) found</div>
-                <div class="table-container">
-                    {generate_table(processed_files, 'processed')}
-                </div>
-            </div>
+            // Click handler for nav items
+            navItems.forEach(item => {{
+                item.addEventListener('click', function(e) {{
+                    // Remove active class from all items
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                }});
+            }});
             
-            <!-- Summarised Files Section -->
-            <div class="paper">
-                <div class="section-header">
-                    <h2 class="section-title">Summarised Files</h2>
-                </div>
-                <div class="section-subtitle">{len(summarized_files)} file(s) found</div>
-                <div class="table-container">
-                    {generate_table(summarized_files, 'summarised')}
-                </div>
-            </div>
-        </div>
-    </div>
+            // Scroll spy - highlight nav item based on scroll position
+            window.addEventListener('scroll', function() {{
+                let current = '';
+                
+                sections.forEach(section => {{
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (window.scrollY >= (sectionTop - 100)) {{
+                        current = section.getAttribute('id');
+                    }}
+                }});
+                
+                navItems.forEach(item => {{
+                    item.classList.remove('active');
+                    if (item.getAttribute('href') === '#' + current) {{
+                        item.classList.add('active');
+                    }}
+                }});
+            }});
+        }});
+    </script>
 </body>
 </html>
 """
@@ -223,13 +396,38 @@ def generate_html_from_json(json_path, html_path):
 
 
 def generate_table(files, file_type):
-    """
-    Helper function to generate Material-UI styled table for files.
-    """
+    
     if not files:
         return "<div class='empty-state'>No files found</div>"
     
     table_html = """
+    <style>
+        .expand-btn {
+            background: none;
+            border: none;
+            border-bottom: 1px solid #1976d2;
+            color: #1976d2;
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 0 0 2px 0;
+            margin-top: 4px;
+            display: inline-block;
+            font-family: inherit;
+        }
+        
+        .expand-btn:hover {
+            color: #1565c0;
+            border-bottom-color: #1565c0;
+        }
+        
+        .full-content {
+            display: none;
+        }
+        
+        .full-content.show {
+            display: block;
+        }
+    </style>
     <table>
         <thead>
             <tr>
@@ -244,35 +442,100 @@ def generate_table(files, file_type):
         <tbody>
     """
     
-    for file in files:
+    for idx, file in enumerate(files):
+        file_name = escape(file.get('file_name', ''))
+        file_size = file.get('file_size', '')
+        directory = escape(file.get('directory', ''))
+        
         # Handle sample_ids
-        sample_ids = file.get("sample_id", [])
-        if isinstance(sample_ids, list):
-            sample_ids = ', '.join(escape(str(s)) for s in sample_ids)
+        sample_ids_raw = file.get("sample_id", [])
+        if isinstance(sample_ids_raw, list):
+            sample_ids_list = sample_ids_raw
+            sample_count = len(sample_ids_list)
         else:
-            sample_ids = escape(str(sample_ids))
+            sample_ids_list = [sample_ids_raw]
+            sample_count = 1
         
         # Handle patient_ids
-        patient_ids = file.get("patient_id", "")
-        if isinstance(patient_ids, list):
-            patient_ids = ', '.join(escape(str(p)) for p in patient_ids)
+        patient_ids_raw = file.get("patient_id", "")
+        if isinstance(patient_ids_raw, list):
+            patient_ids_list = patient_ids_raw
+            patient_count = len(patient_ids_list)
         else:
-            patient_ids = escape(str(patient_ids))
+            patient_ids_list = [patient_ids_raw] if patient_ids_raw else []
+            patient_count = len(patient_ids_list)
+        
+        # Build patient cell
+        if patient_count > 5:
+            patient_preview = ', '.join(escape(str(p)) for p in patient_ids_list[:5])
+            patient_full = ', '.join(escape(str(p)) for p in patient_ids_list)
+            unique_id_patient = f"{file_type}-patient-{idx}"
+            
+            patient_cell = f"""
+                <div id="preview-{unique_id_patient}">
+                    {patient_preview}...
+                </div>
+                <div id="full-{unique_id_patient}" class="full-content">
+                    {patient_full}
+                </div>
+                <button class="expand-btn" onclick="toggleCell('{unique_id_patient}', {patient_count})">
+                    <span id="btn-{unique_id_patient}">Show more ({patient_count} total)</span>
+                </button>
+            """
+        else:
+            patient_cell = ', '.join(escape(str(p)) for p in patient_ids_list)
+        
+        # Build sample cell
+        if sample_count > 5:
+            sample_preview = ', '.join(escape(str(s)) for s in sample_ids_list[:5])
+            sample_full = ', '.join(escape(str(s)) for s in sample_ids_list)
+            unique_id_sample = f"{file_type}-sample-{idx}"
+            
+            sample_cell = f"""
+                <div id="preview-{unique_id_sample}">
+                    {sample_preview}...
+                </div>
+                <div id="full-{unique_id_sample}" class="full-content">
+                    {sample_full}
+                </div>
+                <button class="expand-btn" onclick="toggleCell('{unique_id_sample}', {sample_count})">
+                    <span id="btn-{unique_id_sample}">Show more ({sample_count} total)</span>
+                </button>
+            """
+        else:
+            sample_cell = ', '.join(escape(str(s)) for s in sample_ids_list)
         
         table_html += f"""
             <tr>
-                <td>{escape(file.get('file_name', ''))}</td>  
-                <td>{file.get('file_size', '')}</td>         
-                <td>{patient_ids}</td>                      
-                <td>{sample_ids}</td> 
-                <td>{escape(file.get('directory', ''))}</td>  
-                <td>{ORGANIZATION}</td>                      
+                <td>{file_name}</td>
+                <td>{file_size}</td>
+                <td>{patient_cell}</td>
+                <td>{sample_cell}</td>
+                <td>{directory}</td>
+                <td>{ORGANIZATION}</td>
             </tr>
         """
     
     table_html += """
         </tbody>
     </table>
+    <script>
+        function toggleCell(uniqueId, totalCount) {
+            const preview = document.getElementById('preview-' + uniqueId);
+            const full = document.getElementById('full-' + uniqueId);
+            const btn = document.getElementById('btn-' + uniqueId);
+            
+            if (full.classList.contains('show')) {
+                preview.style.display = 'block';
+                full.classList.remove('show');
+                btn.textContent = 'Show more (' + totalCount + ' total)';
+            } else {
+                preview.style.display = 'none';
+                full.classList.add('show');
+                btn.textContent = 'Show less';
+            }
+        }
+    </script>
     """
     
     return table_html
