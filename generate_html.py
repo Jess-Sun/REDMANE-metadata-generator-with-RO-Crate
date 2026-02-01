@@ -4,9 +4,7 @@ from html import escape
 from params import ORGANIZATION
 
 def generate_html_from_json(json_path, html_path):
-    """
-    Generates a Material-UI styled HTML dashboard with sidebar navigation.
-    """
+
     with open(json_path, "r") as f:
         data = json.load(f)
     
@@ -14,7 +12,6 @@ def generate_html_from_json(json_path, html_path):
     processed_files = data["data"]["files"]["processed"]
     raw_files = data["data"]["files"]["raw"]
     
-    # Generate the complete HTML with embedded CSS
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
