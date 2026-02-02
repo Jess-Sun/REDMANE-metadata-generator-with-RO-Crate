@@ -10,7 +10,7 @@
                     "patient_id": "PatientID001_DiseaseX",
                     "sample_id": "XY001-AGRF",
                     "directory": "./Raw/XY001-AGRF.fastq",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY002-AGRF.fastq",
@@ -18,7 +18,7 @@
                     "patient_id": "PatientID002_DiseaseX",
                     "sample_id": "XY002-AGRF",
                     "directory": "./Raw/XY002-AGRF.fastq",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY003-AGRF.fastq",
@@ -26,7 +26,7 @@
                     "patient_id": "PatientID003_DiseaseX",
                     "sample_id": "XY003-AGRF",
                     "directory": "./Raw/XY003-AGRF.fastq",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY004-AGRF.fastq",
@@ -34,7 +34,7 @@
                     "patient_id": "PatientID004_DiseaseX",
                     "sample_id": "XY004-AGRF",
                     "directory": "./Raw/XY004-AGRF.fastq",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY005-AGRF.fastq",
@@ -42,7 +42,7 @@
                     "patient_id": "PatientID005_DiseaseX",
                     "sample_id": "XY005-AGRF",
                     "directory": "./Raw/XY005-AGRF.fastq",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY006-AGRF.fastq",
@@ -50,7 +50,7 @@
                     "patient_id": "PatientID006_DiseaseX",
                     "sample_id": "XY006-AGRF",
                     "directory": "./Raw/XY006-AGRF.fastq",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY007-AGRF.fastq",
@@ -58,7 +58,7 @@
                     "patient_id": "PatientID007_DiseaseX",
                     "sample_id": "XY007-AGRF",
                     "directory": "./Raw/XY007-AGRF.fastq",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY008-AGRF.fastq",
@@ -66,7 +66,7 @@
                     "patient_id": "PatientID008_DiseaseX",
                     "sample_id": "XY008-AGRF",
                     "directory": "./Raw/XY008-AGRF.fastq",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY009-AGRF.fastq",
@@ -74,7 +74,7 @@
                     "patient_id": "PatientID009_DiseaseX",
                     "sample_id": "XY009-AGRF",
                     "directory": "./Raw/XY009-AGRF.fastq",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY010-AGRF.fastq",
@@ -82,7 +82,7 @@
                     "patient_id": "PatientID010_DiseaseX",
                     "sample_id": "XY010-AGRF",
                     "directory": "./Raw/XY010-AGRF.fastq",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 }
             ],
             "processed": [
@@ -92,7 +92,7 @@
                     "patient_id": "PatientID001_DiseaseX",
                     "sample_id": "XY001-AGRF",
                     "directory": "./Processed/XY001-AGRF.bam",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY002-AGRF.bam",
@@ -100,7 +100,7 @@
                     "patient_id": "PatientID002_DiseaseX",
                     "sample_id": "XY002-AGRF",
                     "directory": "./Processed/XY002-AGRF.bam",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY003-AGRF.bam",
@@ -108,7 +108,7 @@
                     "patient_id": "PatientID003_DiseaseX",
                     "sample_id": "XY003-AGRF",
                     "directory": "./Processed/XY003-AGRF.bam",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY004-AGRF.bam",
@@ -116,7 +116,7 @@
                     "patient_id": "PatientID004_DiseaseX",
                     "sample_id": "XY004-AGRF",
                     "directory": "./Processed/XY004-AGRF.bam",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY005-AGRF.bam",
@@ -124,7 +124,7 @@
                     "patient_id": "PatientID005_DiseaseX",
                     "sample_id": "XY005-AGRF",
                     "directory": "./Processed/XY005-AGRF.bam",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY006-AGRF.bam",
@@ -132,7 +132,7 @@
                     "patient_id": "PatientID006_DiseaseX",
                     "sample_id": "XY006-AGRF",
                     "directory": "./Processed/XY006-AGRF.bam",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY007-AGRF.bam",
@@ -140,7 +140,7 @@
                     "patient_id": "PatientID007_DiseaseX",
                     "sample_id": "XY007-AGRF",
                     "directory": "./Processed/XY007-AGRF.bam",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY008-AGRF.bam",
@@ -148,7 +148,7 @@
                     "patient_id": "PatientID008_DiseaseX",
                     "sample_id": "XY008-AGRF",
                     "directory": "./Processed/XY008-AGRF.bam",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY009-AGRF.bam",
@@ -156,7 +156,7 @@
                     "patient_id": "PatientID009_DiseaseX",
                     "sample_id": "XY009-AGRF",
                     "directory": "./Processed/XY009-AGRF.bam",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY010-AGRF.bam",
@@ -164,7 +164,7 @@
                     "patient_id": "PatientID010_DiseaseX",
                     "sample_id": "XY010-AGRF",
                     "directory": "./Processed/XY010-AGRF.bam",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 }
             ],
             "summarised": [
@@ -174,7 +174,7 @@
                     "patient_id": "PatientID001_DiseaseX",
                     "sample_id": "XY001-AGRF",
                     "directory": "./Summarised/XY001-AGRF.vcf",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY002-AGRF.vcf",
@@ -182,7 +182,7 @@
                     "patient_id": "PatientID002_DiseaseX",
                     "sample_id": "XY002-AGRF",
                     "directory": "./Summarised/XY002-AGRF.vcf",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY003-AGRF.vcf",
@@ -190,7 +190,7 @@
                     "patient_id": "PatientID003_DiseaseX",
                     "sample_id": "XY003-AGRF",
                     "directory": "./Summarised/XY003-AGRF.vcf",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY004-AGRF.vcf",
@@ -198,7 +198,7 @@
                     "patient_id": "PatientID004_DiseaseX",
                     "sample_id": "XY004-AGRF",
                     "directory": "./Summarised/XY004-AGRF.vcf",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY005-AGRF.vcf",
@@ -206,7 +206,7 @@
                     "patient_id": "PatientID005_DiseaseX",
                     "sample_id": "XY005-AGRF",
                     "directory": "./Summarised/XY005-AGRF.vcf",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY006-AGRF.vcf",
@@ -214,7 +214,7 @@
                     "patient_id": "PatientID006_DiseaseX",
                     "sample_id": "XY006-AGRF",
                     "directory": "./Summarised/XY006-AGRF.vcf",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY007-AGRF.vcf",
@@ -222,7 +222,7 @@
                     "patient_id": "PatientID007_DiseaseX",
                     "sample_id": "XY007-AGRF",
                     "directory": "./Summarised/XY007-AGRF.vcf",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY008-AGRF.vcf",
@@ -230,7 +230,7 @@
                     "patient_id": "PatientID008_DiseaseX",
                     "sample_id": "XY008-AGRF",
                     "directory": "./Summarised/XY008-AGRF.vcf",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY009-AGRF.vcf",
@@ -238,7 +238,7 @@
                     "patient_id": "PatientID009_DiseaseX",
                     "sample_id": "XY009-AGRF",
                     "directory": "./Summarised/XY009-AGRF.vcf",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 },
                 {
                     "file_name": "XY010-AGRF.vcf",
@@ -246,7 +246,7 @@
                     "patient_id": "PatientID010_DiseaseX",
                     "sample_id": "XY010-AGRF",
                     "directory": "./Summarised/XY010-AGRF.vcf",
-                    "organization": "National Academy of Taiwan"
+                    "organization": "WEHI"
                 }
             ]
         }
