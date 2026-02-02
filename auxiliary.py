@@ -3,7 +3,6 @@
 
 import os
 import pandas as pd
-from params import * 
 
 def process_files_for_summarised(directory, file_types, organization, cor_dict):
     """   

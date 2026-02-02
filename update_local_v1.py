@@ -2,7 +2,6 @@
 import os
 import json
 from pathlib import Path
-from params import *  # Expects definitions for METADATA, RAW_FILE_TYPES, etc.
 from generate_html import generate_html_from_json
 from auxiliary import process_files_for_summarised
 import pandas as pd
@@ -26,7 +25,7 @@ def load_json(file_path):
     return data
 
 
-def filter_files(directory, config):
+def find_files_via_extensions(directory, config):
     """   
     Recursively scans the given directory for raw data files whose names end with one of the specified file_types.
     Each found file has the fullpath appended to the relevant list.
@@ -72,7 +71,7 @@ def filter_files(directory, config):
          
     return file_path_dict
 
-def process_files(directory, file_path_dict, file_type, organization, cor_dict):
+def process_files(directory, file_path_dict, file_type, organisation, cor_dict):
     """   
     Derives relative path, file size, file name, sample name.
     Maps patient id to sample id.
@@ -88,7 +87,8 @@ def process_files(directory, file_path_dict, file_type, organization, cor_dict):
     Returns:
         list: A list of dictionaries summarising the file details.
     """
-
+    convert_from_bytes = 1024
+    file_size_unit = "KB"
     file_list = []
     total_size = 0
     print(f"Processing the {file_type} files")
@@ -97,7 +97,7 @@ def process_files(directory, file_path_dict, file_type, organization, cor_dict):
 
         relative_path = full_path.relative_to(directory)
         file_path = f"./{relative_path.as_posix()}"
-        file_size = round(os.path.getsize(full_path) / CONVERT_FROM_BYTES)
+        file_size = round(os.path.getsize(full_path) / convert_from_bytes)
         total_size += file_size
         file_name = Path(full_path).name
         sample_name = Path(full_path).stem
@@ -109,21 +109,21 @@ def process_files(directory, file_path_dict, file_type, organization, cor_dict):
             "patient_id": cor_dict.get(sample_name, ""),
             "sample_id": sample_name,
             "directory": file_path,
-            "organization": organization
+            "organization": organisation
         }
 
-        print(f" | {file_path}  ~{file_size}{FILE_SIZE_UNIT}")
+        print(f" | {file_path}  ~{file_size}{file_size_unit}")
 
         # check here to prevent duplicates
         if metadata_dict not in file_list:
             file_list.append(metadata_dict)
 
-    print(f" | Total size for these files: {total_size}{FILE_SIZE_UNIT}")
+    print(f" | Total size for these files: {total_size}{file_size_unit}")
                         
     return file_list
 
 
-def generate_json(directory, output_file):
+def generate_json(directory, output_file, organisation):
     """
     Generates a JSON summary of files in the specified directory using RO‑Crate.
     The directory is recursively scanned for raw, processed, and summarised files.
@@ -140,25 +140,28 @@ def generate_json(directory, output_file):
     # Load metadata from the provided metadata file.
     config = load_json(directory / "config.json")
     cor_dict = load_json(directory / "patient_sample_mapping.json")
-    organization = ORGANIZATION
+    raw_file_extensions = config["raw_file_types"]
+    processed_file_extensions = config["processed_file_types"]
+    summarised_file_extensions = config["summarised_file_types"]
+    file_size_unit = "KB"
 
-    file_path_dict = filter_files(directory, config)
+    file_path_dict = find_files_via_extensions(directory, config)
 
-    print(f"\nProcessing raw files ({', '.join(RAW_FILE_TYPES)})")
-    raw_files = process_files(directory, file_path_dict, "raw", organization, cor_dict) 
+    print(f"\nProcessing raw files ({', '.join(raw_file_extensions)})")
+    raw_files = process_files(directory, file_path_dict, "raw", organisation, cor_dict) 
 
-    print(f"\nProcessing processed files ({', '.join(PROCESSED_FILE_TYPES)})")
-    processed_files = process_files(directory, file_path_dict, "processed", organization, cor_dict) 
+    print(f"\nProcessing processed files ({', '.join(processed_file_extensions)})")
+    processed_files = process_files(directory, file_path_dict, "processed", organisation, cor_dict) 
    
-    print(f"\nProcessing summarised files ({', '.join(SUMMARISED_FILE_TYPES)})")
-    summarised_files = process_files(directory, file_path_dict, "summarised", organization, cor_dict)     
+    print(f"\nProcessing summarised files ({', '.join(summarised_file_extensions)})")
+    summarised_files = process_files(directory, file_path_dict, "summarised", organisation, cor_dict)     
     # summarised_files = process_files_for_summarised(directory, SUMMARISED_FILE_TYPES, organization, cor_dict)
     
     # Build the final output structure.
     output_data = {
         "data": {
             "location": directory.as_posix(),
-            "file_size_unit": FILE_SIZE_UNIT,
+            "file_size_unit": file_size_unit,
             "files": {
                 "raw": raw_files,
                 "processed": processed_files,
@@ -188,11 +191,12 @@ if __name__ == "__main__":
     
     # Determine output file paths relative to the script's directory.
     script_directory = Path(__file__).parent
-    output_file_path = target_directory / OUTPUT_JSON_FILE_NAME
-    output_html_path = target_directory / OUTPUT_HTML_FILE_NAME
-    
+    output_file_path = target_directory / "output.json"
+    output_html_path = target_directory / "output.html"
+    organisation = "WEHI"
+
     try:
-        generate_json(target_directory, output_file_path)
-        generate_html_from_json(output_file_path, output_html_path)
+        generate_json(target_directory, output_file_path, organisation)
+        generate_html_from_json(output_file_path, output_html_path, organisation)
     except Exception as e:
         print(f"Error: {e}")
