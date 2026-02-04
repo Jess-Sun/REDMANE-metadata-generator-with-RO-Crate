@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 from config import validate_config
-from auxiliary import identify_files
+from file_scanner import identify_files
 from generate_html import generate_html
 
 ORGANIZATION = "WEHI"

@@ -4,16 +4,7 @@ import pandas as pd
 from pathlib import Path
 
 def extract_sample_name(filename, extensions):
-    """
-    Extracts the sample name from a filename by stripping known extensions.
-
-    Args:
-        filename (str): The filename including extension.
-        extensions (list): List of known file extensions (e.g., ['.fastq.gz', '.vcf']).
-
-    Returns:
-        str: The extracted sample name.
-    """
+    
     name = filename.lower()
     # Sort extensions by length so .fastq.gz is matched before .gz
     for ext in sorted(extensions, key=len, reverse=True):
@@ -22,30 +13,7 @@ def extract_sample_name(filename, extensions):
     return os.path.splitext(filename)[0]
 
 def identify_files(data_dir, config, organization):
-    """
-    Scans the directory to identify and categorize files based on configuration.
-
-    This function categorizes files into 'raw', 'processed', or 'summarised' based on
-    extensions defined in the configuration. It also handles mapping sample IDs to
-    patient IDs using `sample_to_patient` from config or a legacy mapping file.
-
-    For 'summarised' files (CSV/TSV/MAF), it attempts to extract linked samples/patients,
-    handling counts matrices (header-based) if `counts_format=True`.
-
-    Args:
-        data_dir (Path): Path to the dataset directory.
-        config (dict): Configuration dictionary containing:
-            - raw_file_extensions (list)
-            - processed_file_extensions (list)
-            - summarised_file_extensions (list)
-            - sample_to_patient (dict)
-        organization (str): Organization name for metadata.
-
-    Returns:
-        tuple:
-            - files_by_category (dict): Keys 'raw', 'processed', 'summarised' with lists of file metadata.
-            - total_size (int): Total size of scanned files in KB.
-    """
+    
     files_by_category = {
         "raw": [],
         "processed": [],
@@ -64,21 +32,14 @@ def identify_files(data_dir, config, organization):
         
     all_exts = list(ext_map.keys())
     
-    # Mapping priority: patient_sample_mapping.json > config.json
+    # Mapping: Config only
     sample_map = config.get("sample_to_patient", {})
+    
+    # Check for legacy mapping file to warn user
     mapping_file = data_dir / "patient_sample_mapping.json"
     if mapping_file.exists():
-        try:
-            with open(mapping_file) as f:
-                legacy_map = json.load(f)
-                if isinstance(legacy_map, dict):
-                    # Legacy map takes precedence or merges? 
-                    # Prompt says "Preserve priority order of using dataset-level... when present"
-                    # We will merge, preferring legacy for conflicts
-                    sample_map.update(legacy_map)
-                    print(f" | Loaded legacy mapping from {mapping_file.name}")
-        except Exception as e:
-            print(f" | WARNING: Failed to load legacy mapping: {e}")
+        print(f" | WARNING: Found 'patient_sample_mapping.json' in {data_dir}. "
+              "This file is ignored. Please move mappings to 'config.json'.")
 
     counts_format = config.get("counts_format", False)
     
@@ -116,20 +77,30 @@ def identify_files(data_dir, config, organization):
         if category == "summarised" and path.suffix in [".csv", ".tsv", ".maf"]:
             try:
                 sep = "\t" if path.suffix in [".tsv", ".maf"] else ","
+                # MAF comments usually start with #
                 extra = {"comment": "#"} if path.suffix == ".maf" else {}
 
-                if counts_format and path.suffix == ".tsv":
-                    # Counts TSV: Samples in header
-                    df = pd.read_csv(path, sep=sep, index_col=0, nrows=0)
+                # Read header only
+                df = pd.read_csv(path, sep=sep, index_col=0, nrows=0, **extra)
+                
+                if counts_format:
+                    # Counts format: Samples are columns
                     s_ids = list(df.columns)
                 else:
-                    # Standard: Samples in index
-                    df = pd.read_csv(path, sep=sep, index_col=0, **extra)
-                    if not df.empty:
-                        s_ids = list(df.index.astype(str))
-                
-                # Map resolved samples to patients
-                p_ids = sorted(list(set(sample_map.get(s, "") for s in s_ids if s in sample_map)))
+                    # Standard format: Samples are columns after the first one?
+                    # "Reads only the header row... and uses the column names after the first column as sample IDs."
+                    # If we used index_col=0, df.columns already excludes the first column (the index).
+                    if not df.columns.empty:
+                        s_ids = list(df.columns)
+                    else:
+                         # Fallback to index if no columns found (single column file?), or maybe empty
+                         pass
+
+                # If we found sample IDs in the file, map them to patients
+                # Otherwise, we keep the filename-derived s_ids
+                if s_ids:
+                    # Map resolved samples to patients
+                    p_ids = sorted(list(set(sample_map.get(s, "") for s in s_ids if s in sample_map)))
                 
             except Exception:
                 pass # Fallback to filename-based ID
