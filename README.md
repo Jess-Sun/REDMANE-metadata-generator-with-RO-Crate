@@ -4,10 +4,10 @@ Organise and enrich research files with metadata.
 
 ## Features
 - **Strict Configuration**: Validates `config.json` against a unified schema.
-- **Legacy Support**: Falls back to `patient_sample_mapping.json` if `sample_to_patient` is missing in config.
-- **Flexible Scanning**: robust sample ID extraction (handles `.fastq.gz`) and categorisation.
-- **Summarised Data**: Supports CSV, TSV, and **MAF** formats.
-- **Counts Matrices**: Supports TSV counts tables (samples in header) via CLI flag.
+- **Unified Mapping**: All patient-sample mappings must be defined in `config.json`.
+- **Flexible Scanning**: Robust sample ID extraction and categorisation.
+- **Summarised Data**: Intelligent header-based parsing for CSV, TSV, and MAF formats.
+- **Counts Matrices**: Supports CSV/TSV counts tables (samples in header) via CLI flag.
 - **Static Reports**: Generates self-contained HTML reports.
 
 ## Usage
@@ -32,7 +32,7 @@ Organise and enrich research files with metadata.
    ```
 
    **Options**:
-   - `--counts-tsv`: Treat TSV files as counts matrices (Sample IDs in header).
+   - `--counts-tsv`: Treat CSV/TSV files as counts matrices (Sample IDs in header).
 
 3. Check `output.html` in the dataset directory.
 
