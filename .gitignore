@@ -7,3 +7,5 @@ examples/*/output.html
 test_*/output.json
 test_*/output.html
 test_*/output.css
+simulation/
+test_mvp/
