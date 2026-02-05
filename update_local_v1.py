@@ -8,6 +8,28 @@ import numpy as np
 
 
 
+def extract_sample_name(filename, extensions):
+    # Strip known extensions (longest first) from filename to get sample name
+    name = filename.lower()
+    # Sort extensions by length so .fastq.gz is matched before .gz
+    for ext in sorted(extensions, key=len, reverse=True):
+        if name.endswith(ext.lower()):
+            return filename[:-len(ext)]
+    return os.path.splitext(filename)[0]
+
+
+def validate_directory_match(config, target_directory):
+    # Ensure config directory matches target directory; warn if missing, fail if mismatched
+    expected_dir = config.get("directory") or config.get("expected_directory")
+    if not expected_dir:
+        print(" | WARNING: config.json missing 'directory' (or 'expected_directory'); skipping directory match validation.")
+        return
+    if Path(expected_dir).resolve() != Path(target_directory).resolve():
+        raise ValueError(
+            f"Config directory mismatch: config.json has '{expected_dir}' but target_directory is '{target_directory}'."
+        )
+
+
 def load_json(file_path):
     """
     Load a JSON file from disk.
@@ -108,7 +130,13 @@ def extract_file_metadata(directory, file_path_dict, file_type, organisation, co
         file_size = round(os.path.getsize(full_path) / convert_from_bytes)
         total_size += file_size
         file_name = Path(full_path).name
-        sample_name = Path(full_path).stem
+        # Build a combined list of all known extensions
+        all_exts = (
+            config.get("raw_file_extensions", []) +
+            config.get("processed_file_extensions", []) +
+            config.get("summarised_file_extensions", [])
+        )
+        sample_name = extract_sample_name(file_name, all_exts)
 
         # establish file name
         metadata_dict_by_path[file_path] = {
@@ -149,6 +177,7 @@ def generate_json(directory, output_file, organisation):
   
     # Load metadata from the provided metadata file.
     config = load_json(directory / "config.json")
+    validate_directory_match(config, directory)
 
     raw_file_extensions = config["raw_file_extensions"]
     processed_file_extensions = config["processed_file_extensions"]
