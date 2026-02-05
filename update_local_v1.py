@@ -39,17 +39,17 @@ def find_files_via_extensions(directory, config):
     """    
     bucket_by_ext = {}
 
-    for ext in config["raw_file_types"]:
+    for ext in config["raw_file_extensions"]:
         bucket_by_ext[ext.lower()] = "raw"
 
-    for ext in config["processed_file_types"]:
+    for ext in config["processed_file_extensions"]:
         bucket_by_ext[ext.lower()] = "processed"
 
-    for ext in config["summarised_file_types"]:
+    for ext in config["summarised_file_extensions"]:
         bucket_by_ext[ext.lower()] = "summarised"
 
     file_path_dict = {
-        bucket.replace("_file_types", ""): []
+        bucket.replace("_file_extensions", ""): []
         for bucket in config
     }
 
@@ -71,7 +71,7 @@ def find_files_via_extensions(directory, config):
          
     return file_path_dict
 
-def process_files(directory, file_path_dict, file_type, organisation, cor_dict):
+def process_files(directory, file_path_dict, file_type, organisation, config):
     """   
     Derives relative path, file size, file name, sample name.
     Maps patient id to sample id.
@@ -87,6 +87,7 @@ def process_files(directory, file_path_dict, file_type, organisation, cor_dict):
     Returns:
         list: A list of dictionaries summarising the file details.
     """
+    patient_sample_mapping = config["patient_sample_mapping"]
     convert_from_bytes = 1024
     file_size_unit = "KB"
     file_list = []
@@ -106,7 +107,7 @@ def process_files(directory, file_path_dict, file_type, organisation, cor_dict):
         metadata_dict = {
             "file_name": file_name,
             "file_size": file_size, 
-            "patient_id": cor_dict.get(sample_name, ""),
+            "patient_id": patient_sample_mapping.get(sample_name, ""),
             "sample_id": sample_name,
             "directory": file_path,
             "organization": organisation
@@ -139,22 +140,21 @@ def generate_json(directory, output_file, organisation):
   
     # Load metadata from the provided metadata file.
     config = load_json(directory / "config.json")
-    cor_dict = load_json(directory / "patient_sample_mapping.json")
-    raw_file_extensions = config["raw_file_types"]
-    processed_file_extensions = config["processed_file_types"]
-    summarised_file_extensions = config["summarised_file_types"]
+    raw_file_extensions = config["raw_file_extensions"]
+    processed_file_extensions = config["processed_file_extensions"]
+    summarised_file_extensions = config["summarised_file_extensions"]
     file_size_unit = "KB"
 
     file_path_dict = find_files_via_extensions(directory, config)
 
     print(f"\nProcessing raw files ({', '.join(raw_file_extensions)})")
-    raw_files = process_files(directory, file_path_dict, "raw", organisation, cor_dict) 
+    raw_files = process_files(directory, file_path_dict, "raw", organisation, config) 
 
     print(f"\nProcessing processed files ({', '.join(processed_file_extensions)})")
-    processed_files = process_files(directory, file_path_dict, "processed", organisation, cor_dict) 
+    processed_files = process_files(directory, file_path_dict, "processed", organisation, config) 
    
     print(f"\nProcessing summarised files ({', '.join(summarised_file_extensions)})")
-    summarised_files = process_files(directory, file_path_dict, "summarised", organisation, cor_dict)     
+    summarised_files = process_files(directory, file_path_dict, "summarised", organisation, config)     
     # summarised_files = process_files_for_summarised(directory, SUMMARISED_FILE_TYPES, organization, cor_dict)
     
     # Build the final output structure.
