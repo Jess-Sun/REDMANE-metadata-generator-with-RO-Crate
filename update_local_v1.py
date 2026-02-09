@@ -7,12 +7,10 @@ import pandas as pd
 import numpy as np
 
 
-
 def extract_sample_name(filename, extensions):
-    # Strip known extensions (longest first) from filename to get sample name
+    # Strip known extensions from filename to get sample name
     name = filename.lower()
-    # Sort extensions by length so .fastq.gz is matched before .gz
-    for ext in sorted(extensions, key=len, reverse=True):
+    for ext in extensions:
         if name.endswith(ext.lower()):
             return filename[:-len(ext)]
     return os.path.splitext(filename)[0]
@@ -120,6 +118,12 @@ def extract_file_metadata(directory, file_path_dict, file_type, config):
     file_size_unit = "KB"
     metadata_dict_by_path = {} # dictionary to prevent duplicates
     total_size = 0
+    # Build a combined list of all known extensions
+    all_exts = (
+        config.get("raw_file_extensions", []) +
+        config.get("processed_file_extensions", []) +
+        config.get("summarised_file_extensions", [])
+    )
     print(f"Processing the {file_type} files")
 
     for full_path in file_path_dict[file_type]:
@@ -129,12 +133,6 @@ def extract_file_metadata(directory, file_path_dict, file_type, config):
         file_size = round(os.path.getsize(full_path) / convert_from_bytes)
         total_size += file_size
         file_name = Path(full_path).name
-        # Build a combined list of all known extensions
-        all_exts = (
-            config.get("raw_file_extensions", []) +
-            config.get("processed_file_extensions", []) +
-            config.get("summarised_file_extensions", [])
-        )
         sample_name = extract_sample_name(file_name, all_exts)
 
         # establish file name
