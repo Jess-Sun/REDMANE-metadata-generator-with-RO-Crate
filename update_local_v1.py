@@ -75,7 +75,7 @@ def find_files_via_extensions(directory, config):
 
     return file_path_dict
 
-def extract_file_metadata(directory, file_path_dict, file_type, organisation, config):
+def extract_file_metadata(directory, file_path_dict, file_type, config):
     """
     Extract metadata for files of a given type and return a summary list.
 
@@ -88,7 +88,6 @@ def extract_file_metadata(directory, file_path_dict, file_type, organisation, co
         file_path_dict (dict): Dictionary containing file types ('raw', 'processed',
             'summarised') as keys and lists of file paths as values.
         file_type (str): File category to process ('raw', 'processed', 'summarised').
-        organisation (str): Organisation associated with the data files.
         config (dict): Config dictionary containing 'patient_sample_mapping'.
 
     Returns:
@@ -116,8 +115,7 @@ def extract_file_metadata(directory, file_path_dict, file_type, organisation, co
             "file_size": file_size, 
             "patient_id": patient_sample_mapping.get(sample_name, ""),
             "sample_id": sample_name,
-            "directory": file_path,
-            "organization": organisation
+            "directory": file_path
         }
 
         print(f" | {file_path}  ~{file_size}{file_size_unit}")
@@ -129,7 +127,7 @@ def extract_file_metadata(directory, file_path_dict, file_type, organisation, co
     return file_list
 
 
-def generate_json(directory, output_file, organisation):
+def generate_json(directory, output_file):
     """
     Generate a JSON summary of data files within a directory.
 
@@ -141,7 +139,6 @@ def generate_json(directory, output_file, organisation):
     Args:
         directory (Path): Root directory to analyse.
         output_file (str): Path where the JSON output will be written.
-        organisation (str): Organisation associated with the data files.
     """
     if not directory.is_dir():
         raise ValueError(f"The specified path '{directory}' is not a valid directory.")
@@ -158,13 +155,13 @@ def generate_json(directory, output_file, organisation):
     file_path_dict = find_files_via_extensions(directory, config)
 
     print(f"\nProcessing raw files ({', '.join(raw_file_extensions)})")
-    raw_files = extract_file_metadata(directory, file_path_dict, "raw", organisation, config) 
+    raw_files = extract_file_metadata(directory, file_path_dict, "raw", config) 
 
     print(f"\nProcessing processed files ({', '.join(processed_file_extensions)})")
-    processed_files = extract_file_metadata(directory, file_path_dict, "processed", organisation, config) 
+    processed_files = extract_file_metadata(directory, file_path_dict, "processed", config) 
    
     print(f"\nProcessing summarised files ({', '.join(summarised_file_extensions)})")
-    summarised_files = extract_file_metadata(directory, file_path_dict, "summarised", organisation, config)     
+    summarised_files = extract_file_metadata(directory, file_path_dict, "summarised", config)     
     
     # Build the final output structure.
     output_data = {
@@ -202,10 +199,9 @@ if __name__ == "__main__":
     script_directory = Path(__file__).parent
     output_file_path = target_directory / "output.json"
     output_html_path = target_directory / "output.html"
-    organisation = "WEHI"
 
     try:
-        generate_json(target_directory, output_file_path, organisation)
-        generate_html_from_json(output_file_path, output_html_path, organisation)
+        generate_json(target_directory, output_file_path)
+        generate_html_from_json(output_file_path, output_html_path)
     except Exception as e:
         print(f"Error: {e}")

@@ -432,7 +432,6 @@ def generate_table(files, file_type):
                 <th>Patient ID</th>
                 <th>Sample ID</th>
                 <th>Directory</th>
-                <th>Organization</th>
             </tr>
         </thead>
         <tbody>
@@ -508,7 +507,6 @@ def generate_table(files, file_type):
                 <td>{patient_cell}</td>
                 <td>{sample_cell}</td>
                 <td>{directory}</td>
-                <td>{ORGANIZATION}</td>
             </tr>
         """
     
