@@ -10,15 +10,15 @@
     ".vcf"
   ],
   "patient_sample_mapping": {
-  "XY001-AGRF": "PatientID001_DiseaseX",
-  "XY002-AGRF": "PatientID002_DiseaseX",
-  "XY003-AGRF": "PatientID003_DiseaseX",
-  "XY004-AGRF": "PatientID004_DiseaseX",
-  "XY005-AGRF": "PatientID005_DiseaseX",
-  "XY006-AGRF": "PatientID006_DiseaseX",
-  "XY007-AGRF": "PatientID007_DiseaseX",
-  "XY008-AGRF": "PatientID008_DiseaseX",
-  "XY009-AGRF": "PatientID009_DiseaseX",
-  "XY010-AGRF": "PatientID010_DiseaseX"
+  "XY001": "PatientID001_DiseaseX",
+  "XY002": "PatientID002_DiseaseX",
+  "XY003": "PatientID003_DiseaseX",
+  "XY004": "PatientID004_DiseaseX",
+  "XY005": "PatientID005_DiseaseX",
+  "XY006": "PatientID006_DiseaseX",
+  "XY007": "PatientID007_DiseaseX",
+  "XY008": "PatientID008_DiseaseX",
+  "XY009": "PatientID009_DiseaseX",
+  "XY010": "PatientID010_DiseaseX"
 }
 }
