@@ -1,19 +1,11 @@
 #!/usr/bin/env python3
 import os
 import json
+import re
 from pathlib import Path
 from generate_html import generate_html_from_json
 import pandas as pd
 import numpy as np
-
-
-def extract_sample_name(filename, extensions):
-    # Strip known extensions from filename to get sample name
-    name = filename.lower()
-    for ext in extensions:
-        if name.endswith(ext.lower()):
-            return filename[:-len(ext)]
-    return os.path.splitext(filename)[0]
 
 
 def validate_directory_match(config, target_directory):
@@ -118,13 +110,8 @@ def extract_file_metadata(directory, file_path_dict, file_type, config):
     file_size_unit = "KB"
     metadata_dict_by_path = {} # dictionary to prevent duplicates
     total_size = 0
-    # Build a combined list of all known extensions
-    all_exts = (
-        config.get("raw_file_extensions", []) +
-        config.get("processed_file_extensions", []) +
-        config.get("summarised_file_extensions", [])
-    )
-    print(f"Processing the {file_type} files")
+    # regex pattern for matching sampleID to file name
+    all_sample_ids = re.compile("|".join(map(re.escape, patient_sample_mapping.keys())))
 
     for full_path in file_path_dict[file_type]:
 
@@ -133,14 +120,18 @@ def extract_file_metadata(directory, file_path_dict, file_type, config):
         file_size = round(os.path.getsize(full_path) / convert_from_bytes)
         total_size += file_size
         file_name = Path(full_path).name
-        sample_name = extract_sample_name(file_name, all_exts)
+        
+        # regex matching of sampleID and patientID to file name
+        match = all_sample_ids.search(file_name)
+        sample_id = match.group()
+        patient_id = patient_sample_mapping.get(sample_id if match else None)
 
         # establish file name
         metadata_dict_by_path[file_path] = {
             "file_name": file_name,
             "file_size": file_size, 
-            "patient_id": patient_sample_mapping.get(sample_name, ""),
-            "sample_id": sample_name,
+            "patient_id": patient_id,
+            "sample_id": sample_id,
             "directory": file_path
         }
 

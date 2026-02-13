@@ -8,70 +8,70 @@
                     "file_name": "XY001-AGRF.fastq",
                     "file_size": 15,
                     "patient_id": "PatientID001_DiseaseX",
-                    "sample_id": "XY001-AGRF",
+                    "sample_id": "XY001",
                     "directory": "./Raw/XY001-AGRF.fastq"
                 },
                 {
                     "file_name": "XY002-AGRF.fastq",
                     "file_size": 12,
                     "patient_id": "PatientID002_DiseaseX",
-                    "sample_id": "XY002-AGRF",
+                    "sample_id": "XY002",
                     "directory": "./Raw/XY002-AGRF.fastq"
                 },
                 {
                     "file_name": "XY003-AGRF.fastq",
                     "file_size": 18,
                     "patient_id": "PatientID003_DiseaseX",
-                    "sample_id": "XY003-AGRF",
+                    "sample_id": "XY003",
                     "directory": "./Raw/XY003-AGRF.fastq"
                 },
                 {
                     "file_name": "XY004-AGRF.fastq",
                     "file_size": 17,
                     "patient_id": "PatientID004_DiseaseX",
-                    "sample_id": "XY004-AGRF",
+                    "sample_id": "XY004",
                     "directory": "./Raw/XY004-AGRF.fastq"
                 },
                 {
                     "file_name": "XY005-AGRF.fastq",
                     "file_size": 11,
                     "patient_id": "PatientID005_DiseaseX",
-                    "sample_id": "XY005-AGRF",
+                    "sample_id": "XY005",
                     "directory": "./Raw/XY005-AGRF.fastq"
                 },
                 {
                     "file_name": "XY006-AGRF.fastq",
                     "file_size": 11,
                     "patient_id": "PatientID006_DiseaseX",
-                    "sample_id": "XY006-AGRF",
+                    "sample_id": "XY006",
                     "directory": "./Raw/XY006-AGRF.fastq"
                 },
                 {
                     "file_name": "XY007-AGRF.fastq",
                     "file_size": 16,
                     "patient_id": "PatientID007_DiseaseX",
-                    "sample_id": "XY007-AGRF",
+                    "sample_id": "XY007",
                     "directory": "./Raw/XY007-AGRF.fastq"
                 },
                 {
                     "file_name": "XY008-AGRF.fastq",
                     "file_size": 14,
                     "patient_id": "PatientID008_DiseaseX",
-                    "sample_id": "XY008-AGRF",
+                    "sample_id": "XY008",
                     "directory": "./Raw/XY008-AGRF.fastq"
                 },
                 {
                     "file_name": "XY009-AGRF.fastq",
                     "file_size": 18,
                     "patient_id": "PatientID009_DiseaseX",
-                    "sample_id": "XY009-AGRF",
+                    "sample_id": "XY009",
                     "directory": "./Raw/XY009-AGRF.fastq"
                 },
                 {
                     "file_name": "XY010-AGRF.fastq",
                     "file_size": 19,
                     "patient_id": "PatientID010_DiseaseX",
-                    "sample_id": "XY010-AGRF",
+                    "sample_id": "XY010",
                     "directory": "./Raw/XY010-AGRF.fastq"
                 }
             ],
@@ -80,70 +80,70 @@
                     "file_name": "XY001-AGRF.bam",
                     "file_size": 10,
                     "patient_id": "PatientID001_DiseaseX",
-                    "sample_id": "XY001-AGRF",
+                    "sample_id": "XY001",
                     "directory": "./Processed/XY001-AGRF.bam"
                 },
                 {
                     "file_name": "XY002-AGRF.bam",
                     "file_size": 9,
                     "patient_id": "PatientID002_DiseaseX",
-                    "sample_id": "XY002-AGRF",
+                    "sample_id": "XY002",
                     "directory": "./Processed/XY002-AGRF.bam"
                 },
                 {
                     "file_name": "XY003-AGRF.bam",
                     "file_size": 10,
                     "patient_id": "PatientID003_DiseaseX",
-                    "sample_id": "XY003-AGRF",
+                    "sample_id": "XY003",
                     "directory": "./Processed/XY003-AGRF.bam"
                 },
                 {
                     "file_name": "XY004-AGRF.bam",
                     "file_size": 8,
                     "patient_id": "PatientID004_DiseaseX",
-                    "sample_id": "XY004-AGRF",
+                    "sample_id": "XY004",
                     "directory": "./Processed/XY004-AGRF.bam"
                 },
                 {
                     "file_name": "XY005-AGRF.bam",
                     "file_size": 5,
                     "patient_id": "PatientID005_DiseaseX",
-                    "sample_id": "XY005-AGRF",
+                    "sample_id": "XY005",
                     "directory": "./Processed/XY005-AGRF.bam"
                 },
                 {
                     "file_name": "XY006-AGRF.bam",
                     "file_size": 7,
                     "patient_id": "PatientID006_DiseaseX",
-                    "sample_id": "XY006-AGRF",
+                    "sample_id": "XY006",
                     "directory": "./Processed/XY006-AGRF.bam"
                 },
                 {
                     "file_name": "XY007-AGRF.bam",
                     "file_size": 6,
                     "patient_id": "PatientID007_DiseaseX",
-                    "sample_id": "XY007-AGRF",
+                    "sample_id": "XY007",
                     "directory": "./Processed/XY007-AGRF.bam"
                 },
                 {
                     "file_name": "XY008-AGRF.bam",
                     "file_size": 6,
                     "patient_id": "PatientID008_DiseaseX",
-                    "sample_id": "XY008-AGRF",
+                    "sample_id": "XY008",
                     "directory": "./Processed/XY008-AGRF.bam"
                 },
                 {
                     "file_name": "XY009-AGRF.bam",
                     "file_size": 10,
                     "patient_id": "PatientID009_DiseaseX",
-                    "sample_id": "XY009-AGRF",
+                    "sample_id": "XY009",
                     "directory": "./Processed/XY009-AGRF.bam"
                 },
                 {
                     "file_name": "XY010-AGRF.bam",
                     "file_size": 6,
                     "patient_id": "PatientID010_DiseaseX",
-                    "sample_id": "XY010-AGRF",
+                    "sample_id": "XY010",
                     "directory": "./Processed/XY010-AGRF.bam"
                 }
             ],
@@ -152,70 +152,70 @@
                     "file_name": "XY001-AGRF.vcf",
                     "file_size": 4,
                     "patient_id": "PatientID001_DiseaseX",
-                    "sample_id": "XY001-AGRF",
+                    "sample_id": "XY001",
                     "directory": "./Summarised/XY001-AGRF.vcf"
                 },
                 {
                     "file_name": "XY002-AGRF.vcf",
                     "file_size": 3,
                     "patient_id": "PatientID002_DiseaseX",
-                    "sample_id": "XY002-AGRF",
+                    "sample_id": "XY002",
                     "directory": "./Summarised/XY002-AGRF.vcf"
                 },
                 {
                     "file_name": "XY003-AGRF.vcf",
                     "file_size": 1,
                     "patient_id": "PatientID003_DiseaseX",
-                    "sample_id": "XY003-AGRF",
+                    "sample_id": "XY003",
                     "directory": "./Summarised/XY003-AGRF.vcf"
                 },
                 {
                     "file_name": "XY004-AGRF.vcf",
                     "file_size": 3,
                     "patient_id": "PatientID004_DiseaseX",
-                    "sample_id": "XY004-AGRF",
+                    "sample_id": "XY004",
                     "directory": "./Summarised/XY004-AGRF.vcf"
                 },
                 {
                     "file_name": "XY005-AGRF.vcf",
                     "file_size": 5,
                     "patient_id": "PatientID005_DiseaseX",
-                    "sample_id": "XY005-AGRF",
+                    "sample_id": "XY005",
                     "directory": "./Summarised/XY005-AGRF.vcf"
                 },
                 {
                     "file_name": "XY006-AGRF.vcf",
                     "file_size": 2,
                     "patient_id": "PatientID006_DiseaseX",
-                    "sample_id": "XY006-AGRF",
+                    "sample_id": "XY006",
                     "directory": "./Summarised/XY006-AGRF.vcf"
                 },
                 {
                     "file_name": "XY007-AGRF.vcf",
                     "file_size": 2,
                     "patient_id": "PatientID007_DiseaseX",
-                    "sample_id": "XY007-AGRF",
+                    "sample_id": "XY007",
                     "directory": "./Summarised/XY007-AGRF.vcf"
                 },
                 {
                     "file_name": "XY008-AGRF.vcf",
                     "file_size": 3,
                     "patient_id": "PatientID008_DiseaseX",
-                    "sample_id": "XY008-AGRF",
+                    "sample_id": "XY008",
                     "directory": "./Summarised/XY008-AGRF.vcf"
                 },
                 {
                     "file_name": "XY009-AGRF.vcf",
                     "file_size": 2,
                     "patient_id": "PatientID009_DiseaseX",
-                    "sample_id": "XY009-AGRF",
+                    "sample_id": "XY009",
                     "directory": "./Summarised/XY009-AGRF.vcf"
                 },
                 {
                     "file_name": "XY010-AGRF.vcf",
                     "file_size": 4,
                     "patient_id": "PatientID010_DiseaseX",
-                    "sample_id": "XY010-AGRF",
+                    "sample_id": "XY010",
                     "directory": "./Summarised/XY010-AGRF.vcf"
                 }
             ]
