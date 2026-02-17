@@ -123,8 +123,12 @@ def extract_file_metadata(directory, file_path_dict, file_type, config):
         
         # regex matching of sampleID and patientID to file name
         match = all_sample_ids.search(file_name)
+        # flag files where sampleID cannot be found in mapping within config.json
+        if not match:
+            print("SampleID NOT FOUND for file:", file_name)
+            continue
         sample_id = match.group()
-        patient_id = patient_sample_mapping.get(sample_id if match else None)
+        patient_id = patient_sample_mapping.get(sample_id)
 
         # establish file name
         metadata_dict_by_path[file_path] = {
