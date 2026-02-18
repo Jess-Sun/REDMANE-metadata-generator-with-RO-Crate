@@ -4,15 +4,27 @@ import json
 import re
 from pathlib import Path
 from generate_html import generate_html_from_json
-import pandas as pd
-import numpy as np
 
 
 def validate_directory_match(config, target_directory):
+    """
+    Validate that the directory specified in the config matches the
+    provided target directory.
+
+    If "directory" does not exists in the config, a warning is printed 
+    and validation is skipped. If the paths do not match, a ValueError is raised.
+
+    Args:
+        config (dict): Configuration dictionary.
+        target_directory (str or Path): Directory being processed.
+
+    Raises:
+        ValueError: If the config directory and target_directory differ.
+    """
     # Ensure config directory matches target directory; warn if missing, fail if mismatched
-    expected_dir = config.get("directory") or config.get("expected_directory")
+    expected_dir = config.get("directory")
     if not expected_dir:
-        print(" | WARNING: config.json missing 'directory' (or 'expected_directory'); skipping directory match validation.")
+        print(" | WARNING: config.json missing 'directory'; skipping directory match validation.")
         return
     if Path(expected_dir).resolve() != Path(target_directory).resolve():
         raise ValueError(
@@ -92,8 +104,7 @@ def extract_file_metadata(directory, file_path_dict, file_type, config):
     Extract metadata for files of a given type and return a summary list.
 
     For each file, this function derives the relative path, file name, file
-    size, and sample identifier, and maps samples to patient IDs using the
-    config.
+    size, and maps files to sample and patient IDs using the config.
 
     Args:
         directory (str): Root directory used to compute relative file paths.
@@ -108,9 +119,9 @@ def extract_file_metadata(directory, file_path_dict, file_type, config):
     patient_sample_mapping = config["patient_sample_mapping"]
     convert_from_bytes = 1024
     file_size_unit = "KB"
-    metadata_dict_by_path = {} # dictionary to prevent duplicates
+    metadata_dict_by_path = {} # Dictionary to prevent duplicates
     total_size = 0
-    # regex pattern for matching sampleID to file name
+    # Regex pattern for matching sampleID to file name
     all_sample_ids = re.compile("|".join(map(re.escape, patient_sample_mapping.keys())))
 
     for full_path in file_path_dict[file_type]:
@@ -121,16 +132,16 @@ def extract_file_metadata(directory, file_path_dict, file_type, config):
         total_size += file_size
         file_name = Path(full_path).name
         
-        # regex matching of sampleID and patientID to file name
+        # Regex matching of sampleID and patientID to file name
         match = all_sample_ids.search(file_name)
-        # flag files where sampleID cannot be found in mapping within config.json
+        # Flag files where sampleID cannot be found in mapping within config.json
         if not match:
             print("SampleID NOT FOUND for file:", file_name)
             continue
         sample_id = match.group()
         patient_id = patient_sample_mapping.get(sample_id)
 
-        # establish file name
+        # Record metadata for each file
         metadata_dict_by_path[file_path] = {
             "file_name": file_name,
             "file_size": file_size, 
@@ -165,7 +176,7 @@ def generate_json(directory, output_file):
         raise ValueError(f"The specified path '{directory}' is not a valid directory.")
     
   
-    # Load metadata from the provided metadata file.
+    # Load config information from the provided config file.
     config = load_json(directory / "config.json")
     validate_directory_match(config, directory)
 
@@ -174,8 +185,10 @@ def generate_json(directory, output_file):
     summarised_file_extensions = config["summarised_file_extensions"]
     file_size_unit = "KB"
 
+    # Scan directory for files of interest
     file_path_dict = find_files_via_extensions(directory, config)
 
+    # Generate metadata for each category of files
     print(f"\nProcessing raw files ({', '.join(raw_file_extensions)})")
     raw_files = extract_file_metadata(directory, file_path_dict, "raw", config) 
 
@@ -213,7 +226,6 @@ if __name__ == "__main__":
         print("Usage: python update_local.py /path/to/files")
         sys.exit(1)
     
-    # The target directory should be the 'files' subfolder.
     target_directory = Path(sys.argv[1])
     print(f"\nSearching through {target_directory} .........")
     
@@ -224,6 +236,7 @@ if __name__ == "__main__":
 
     try:
         generate_json(target_directory, output_file_path)
+        # Create html preview of json contents
         generate_html_from_json(output_file_path, output_html_path)
     except Exception as e:
         print(f"Error: {e}")
