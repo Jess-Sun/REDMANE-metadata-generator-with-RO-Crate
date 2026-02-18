@@ -1,137 +1,165 @@
 #!/usr/bin/env python3
 import os
 import json
+import re
 from pathlib import Path
-from params import *  # Expects definitions for METADATA, RAW_FILE_TYPES, etc.
 from generate_html import generate_html_from_json
-from auxiliary import process_files_for_summarised
 import pandas as pd
 import numpy as np
 
 
+def validate_directory_match(config, target_directory):
+    # Ensure config directory matches target directory; warn if missing, fail if mismatched
+    expected_dir = config.get("directory") or config.get("expected_directory")
+    if not expected_dir:
+        print(" | WARNING: config.json missing 'directory' (or 'expected_directory'); skipping directory match validation.")
+        return
+    if Path(expected_dir).resolve() != Path(target_directory).resolve():
+        raise ValueError(
+            f"Config directory mismatch: config.json has '{expected_dir}' but target_directory is '{target_directory}'."
+        )
+
 
 def load_json(file_path):
     """
-    Loads the JSON file including the pairs of samples and corresponding patients and return a dictionary.
-    The keys are sample_id and values are patient_id in this dictionary.
+    Load a JSON file from disk.
+
+    This function reads a JSON file and returns its contents as a Python
+    dictionary.
 
     Args:
-        file_path (str): Path to the metadata JSON file.
+        file_path (str): Path to the JSON file.
 
     Returns:
-        dict: Mapping from "Patient ID" to the metadata entry.
+        dict: Parsed JSON content as a dictionary.
     """
     with open(file_path, "r") as f:
         data = json.load(f)
     return data
 
 
-def filter_files(directory, config):
-    """   
-    Recursively scans the given directory for raw data files whose names end with one of the specified file_types.
-    Each found file has the fullpath appended to the relevant list.
-    
+def find_files_via_extensions(directory, config):
+    """
+    Recursively scan a directory and group files by data stage based on
+    file extensions defined in the config.
+
+    Extensions listed under 'raw_file_extensions',
+    'processed_file_extensions', and 'summarised_file_extensions' are used
+    to categorise files.
+
     Args:
-        directory (str): The directory to search.
-        raw (list): List of raw file extensions to match.
-    
+        directory (str): Root directory to search.
+        config (dict): Config dictionary defining file extensions
+            for raw, processed, and summarised data.
+
     Returns:
-        dictionary: A dictionary of lists containing the full paths for raw, processed and summarised files respectively.
-    """    
-    bucket_by_ext = {}
+        dict: Mapping of data stages ('raw', 'processed', 'summarised') to
+        lists of matching file paths.
+    """
+    bucket_by_ext: dict[str, str] = {}
+    file_path_dict: dict[str, list[Path]] = {}
 
-    for ext in config["raw_file_types"]:
-        bucket_by_ext[ext.lower()] = "raw"
+    for key, exts in config.items():
+        if not key.endswith("_file_extensions"):
+            continue
 
-    for ext in config["processed_file_types"]:
-        bucket_by_ext[ext.lower()] = "processed"
+        bucket = key.replace("_file_extensions", "")  # e.g. "raw"
+        file_path_dict[bucket] = []
 
-    for ext in config["summarised_file_types"]:
-        bucket_by_ext[ext.lower()] = "summarised"
+        for ext in exts:
+            bucket_by_ext[str(ext).lower()] = bucket
 
-    file_path_dict = {
-        bucket.replace("_file_types", ""): []
-        for bucket in config
-    }
-
-    # file_path_dict = {"raw":[], "processed":[], "summarised":[]}
-
+    # Walk and bucket files
     for root, _, files in os.walk(directory):
         for file in files:
             ext = Path(file).suffix.lower()
             bucket = bucket_by_ext.get(ext)
-
             if bucket is None:
                 continue
+
             full_path = Path(root) / file
             file_path_dict[bucket].append(full_path)
 
+    # Report empty buckets
     for bucket, files in file_path_dict.items():
         if not files:
             print(f" | No files found for {bucket} file types")
-         
+
     return file_path_dict
 
-def process_files(directory, file_path_dict, file_type, organization, cor_dict):
-    """   
-    Derives relative path, file size, file name, sample name.
-    Maps patient id to sample id.
-    Writes above information into dictionary for each file.
-    
-    Args:
-        directory (str): The directory to create relative path with
-        file_path_dict (dict): Dictionary containing raw, processed, summarised as keys and file paths as values
-        file_type (str): Specifies either raw, processed or summarised
-        organization (str): Organization that the data files are from, can be modified in params.py
-        cor_dict: The dictionary containing the keys as sample_id and values as patient_id
-    
-    Returns:
-        list: A list of dictionaries summarising the file details.
+def extract_file_metadata(directory, file_path_dict, file_type, config):
     """
+    Extract metadata for files of a given type and return a summary list.
 
-    file_list = []
+    For each file, this function derives the relative path, file name, file
+    size, and sample identifier, and maps samples to patient IDs using the
+    config.
+
+    Args:
+        directory (str): Root directory used to compute relative file paths.
+        file_path_dict (dict): Dictionary containing file types ('raw', 'processed',
+            'summarised') as keys and lists of file paths as values.
+        file_type (str): File category to process ('raw', 'processed', 'summarised').
+        config (dict): Config dictionary containing 'patient_sample_mapping'.
+
+    Returns:
+        list[dict]: List of dictionaries summarising metadata for each file.
+    """
+    patient_sample_mapping = config["patient_sample_mapping"]
+    convert_from_bytes = 1024
+    file_size_unit = "KB"
+    metadata_dict_by_path = {} # dictionary to prevent duplicates
     total_size = 0
-    print(f"Processing the {file_type} files")
+    # regex pattern for matching sampleID to file name
+    all_sample_ids = re.compile("|".join(map(re.escape, patient_sample_mapping.keys())))
 
     for full_path in file_path_dict[file_type]:
 
         relative_path = full_path.relative_to(directory)
         file_path = f"./{relative_path.as_posix()}"
-        file_size = round(os.path.getsize(full_path) / CONVERT_FROM_BYTES)
+        file_size = round(os.path.getsize(full_path) / convert_from_bytes)
         total_size += file_size
         file_name = Path(full_path).name
-        sample_name = Path(full_path).stem
+        
+        # regex matching of sampleID and patientID to file name
+        match = all_sample_ids.search(file_name)
+        # flag files where sampleID cannot be found in mapping within config.json
+        if not match:
+            print("SampleID NOT FOUND for file:", file_name)
+            continue
+        sample_id = match.group()
+        patient_id = patient_sample_mapping.get(sample_id)
 
         # establish file name
-        metadata_dict = {
+        metadata_dict_by_path[file_path] = {
             "file_name": file_name,
             "file_size": file_size, 
-            "patient_id": cor_dict.get(sample_name, ""),
-            "sample_id": sample_name,
-            "directory": file_path,
-            "organization": organization
+            "patient_id": patient_id,
+            "sample_id": sample_id,
+            "directory": file_path
         }
 
-        print(f" | {file_path}  ~{file_size}{FILE_SIZE_UNIT}")
+        print(f" | {file_path}  ~{file_size}{file_size_unit}")
 
-        # check here to prevent duplicates
-        if metadata_dict not in file_list:
-            file_list.append(metadata_dict)
+    print(f" | Total size for these files: {total_size}{file_size_unit}")
 
-    print(f" | Total size for these files: {total_size}{FILE_SIZE_UNIT}")
-                        
+    file_list = list(metadata_dict_by_path.values())  
+
     return file_list
 
 
 def generate_json(directory, output_file):
     """
-    Generates a JSON summary of files in the specified directory using RO‑Crate.
-    The directory is recursively scanned for raw, processed, and summarised files.
-    Each file is registered in the RO‑Crate with enriched metadata.
-    
+    Generate a JSON summary of data files within a directory.
+
+    The directory is recursively scanned for raw, processed, and summarised
+    files using extension rules defined in a local configuration file
+    ('config.json'). File metadata are collected and written to a structured
+    JSON output.
+
     Args:
-        directory (str): The directory to analyze.
-        output_file (str): The path where the JSON output will be saved.
+        directory (Path): Root directory to analyse.
+        output_file (str): Path where the JSON output will be written.
     """
     if not directory.is_dir():
         raise ValueError(f"The specified path '{directory}' is not a valid directory.")
@@ -139,26 +167,29 @@ def generate_json(directory, output_file):
   
     # Load metadata from the provided metadata file.
     config = load_json(directory / "config.json")
-    cor_dict = load_json(directory / "patient_sample_mapping.json")
-    organization = ORGANIZATION
+    validate_directory_match(config, directory)
 
-    file_path_dict = filter_files(directory, config)
+    raw_file_extensions = config["raw_file_extensions"]
+    processed_file_extensions = config["processed_file_extensions"]
+    summarised_file_extensions = config["summarised_file_extensions"]
+    file_size_unit = "KB"
 
-    print(f"\nProcessing raw files ({', '.join(RAW_FILE_TYPES)})")
-    raw_files = process_files(directory, file_path_dict, "raw", organization, cor_dict) 
+    file_path_dict = find_files_via_extensions(directory, config)
 
-    print(f"\nProcessing processed files ({', '.join(PROCESSED_FILE_TYPES)})")
-    processed_files = process_files(directory, file_path_dict, "processed", organization, cor_dict) 
+    print(f"\nProcessing raw files ({', '.join(raw_file_extensions)})")
+    raw_files = extract_file_metadata(directory, file_path_dict, "raw", config) 
+
+    print(f"\nProcessing processed files ({', '.join(processed_file_extensions)})")
+    processed_files = extract_file_metadata(directory, file_path_dict, "processed", config) 
    
-    print(f"\nProcessing summarised files ({', '.join(SUMMARISED_FILE_TYPES)})")
-    summarised_files = process_files(directory, file_path_dict, "summarised", organization, cor_dict)     
-    # summarised_files = process_files_for_summarised(directory, SUMMARISED_FILE_TYPES, organization, cor_dict)
+    print(f"\nProcessing summarised files ({', '.join(summarised_file_extensions)})")
+    summarised_files = extract_file_metadata(directory, file_path_dict, "summarised", config)     
     
     # Build the final output structure.
     output_data = {
         "data": {
             "location": directory.as_posix(),
-            "file_size_unit": FILE_SIZE_UNIT,
+            "file_size_unit": file_size_unit,
             "files": {
                 "raw": raw_files,
                 "processed": processed_files,
@@ -188,9 +219,9 @@ if __name__ == "__main__":
     
     # Determine output file paths relative to the script's directory.
     script_directory = Path(__file__).parent
-    output_file_path = target_directory / OUTPUT_JSON_FILE_NAME
-    output_html_path = target_directory / OUTPUT_HTML_FILE_NAME
-    
+    output_file_path = target_directory / "output.json"
+    output_html_path = target_directory / "output.html"
+
     try:
         generate_json(target_directory, output_file_path)
         generate_html_from_json(output_file_path, output_html_path)

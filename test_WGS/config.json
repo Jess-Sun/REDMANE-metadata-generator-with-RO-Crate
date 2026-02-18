@@ -1,11 +1,24 @@
 {
-  "raw_file_types": [
+  "directory": "test_WGS",
+  "raw_file_extensions": [
     ".fastq"
   ],
-  "processed_file_types": [
+  "processed_file_extensions": [
     ".bam"
   ],
-  "summarised_file_types": [
+  "summarised_file_extensions": [
     ".vcf"
-  ]
+  ],
+  "patient_sample_mapping": {
+  "XY001": "PatientID001_DiseaseX",
+  "XY002": "PatientID002_DiseaseX",
+  "XY003": "PatientID003_DiseaseX",
+  "XY004": "PatientID004_DiseaseX",
+  "XY005": "PatientID005_DiseaseX",
+  "XY006": "PatientID006_DiseaseX",
+  "XY007": "PatientID007_DiseaseX",
+  "XY008": "PatientID008_DiseaseX",
+  "XY009": "PatientID009_DiseaseX",
+  "XY010": "PatientID010_DiseaseX"
+}
 }
