@@ -3,6 +3,7 @@ import os
 import json
 import re
 from pathlib import Path
+import csv
 from generate_html import generate_html_from_json
 
 
@@ -48,6 +49,45 @@ def load_json(file_path):
     with open(file_path, "r") as f:
         data = json.load(f)
     return data
+
+
+def extract_sample_ids_from_counts_file(file_path: Path, sample_id_regex: re.Pattern) -> list[str]:
+    """
+    Scan a CSV/TSV file for sample IDs in the header row and first column.
+    Returns a list of matching sample IDs (deduplicated).
+    Only supports .csv and .tsv.
+    """
+    matches: set[str] = set()
+    suffix = file_path.suffix.lower()
+    if suffix not in (".csv", ".tsv"):
+        return []
+
+    delimiter = "\t" if suffix == ".tsv" else ","
+
+    try:
+        with open(file_path, "r", newline="") as f:
+            reader = csv.reader(f, delimiter=delimiter)
+
+            header = next(reader, [])
+            for cell in header:
+                m = sample_id_regex.search(str(cell))
+                if m:
+                    matches.add(m.group())
+
+            # Scan first column of up to first 100 rows (performance bound)
+            for i, row in enumerate(reader):
+                if i >= 100:
+                    break
+                if not row:
+                    continue
+                m = sample_id_regex.search(str(row[0]))
+                if m:
+                    matches.add(m.group())
+
+    except Exception:
+        return []
+
+    return list(matches)
 
 
 def find_files_via_extensions(directory, config):
@@ -134,8 +174,25 @@ def extract_file_metadata(directory, file_path_dict, file_type, config):
         
         # Regex matching of sampleID and patientID to file name
         match = all_sample_ids.search(file_name)
-        # Flag files where sampleID cannot be found in mapping within config.json
+
+        # If no regex match in filename, attempt to detect sample IDs inside counts files
         if not match:
+            if file_type == "summarised":
+                found_ids = extract_sample_ids_from_counts_file(full_path, all_sample_ids)
+                if found_ids:
+                    for sid in found_ids:
+                        pid = patient_sample_mapping.get(sid, "")
+                        unique_key = f"{file_path}-{sid}"
+                        metadata_dict_by_path[unique_key] = {
+                            "file_name": file_name,
+                            "file_size": file_size,
+                            "patient_id": pid,
+                            "sample_id": sid,
+                            "directory": file_path
+                        }
+                    # We have recorded metadata entries for this file (per sid), so skip the default path
+                    continue
+
             print("SampleID NOT FOUND for file:", file_name)
             continue
         sample_id = match.group()
