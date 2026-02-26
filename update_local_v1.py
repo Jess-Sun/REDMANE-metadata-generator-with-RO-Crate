@@ -51,6 +51,40 @@ def load_json(file_path):
     return data
 
 
+def check_config(config):
+    """
+    Validate config.json has required keys and expected types.
+    Raises ValueError on any invalid/missing config (fail loudly).
+    Returns the normalized config dict.
+    """
+    required = [
+        "raw_file_extensions",
+        "processed_file_extensions",
+        "summarised_file_extensions",
+        "patient_sample_mapping",
+    ]
+    missing = [k for k in required if k not in config]
+    if missing:
+        raise ValueError(f"config.json missing required keys: {missing}")
+
+    # Validate extension lists
+    for k in ["raw_file_extensions", "processed_file_extensions", "summarised_file_extensions"]:
+        v = config[k]
+        if not isinstance(v, list) or len(v) == 0:
+            raise ValueError(f"config key '{k}' must be a non-empty list")
+        # Optional: ensure list entries are strings (still minimal)
+        for ext in v:
+            if not isinstance(ext, str):
+                raise ValueError(f"config key '{k}' must contain only strings (invalid: {ext})")
+
+    # Validate mapping
+    m = config["patient_sample_mapping"]
+    if not isinstance(m, dict) or len(m) == 0:
+        raise ValueError("config key 'patient_sample_mapping' must be a non-empty dictionary")
+
+    return config
+
+
 def extract_sample_ids_from_counts_file(file_path: Path, sample_id_regex: re.Pattern) -> list[str]:
     """
     Scan a CSV/TSV file for sample IDs in the header row and first column.
@@ -235,6 +269,7 @@ def generate_json(directory, output_file):
   
     # Load config information from the provided config file.
     config = load_json(directory / "config.json")
+    config = check_config(config)
     validate_directory_match(config, directory)
 
     raw_file_extensions = config["raw_file_extensions"]
