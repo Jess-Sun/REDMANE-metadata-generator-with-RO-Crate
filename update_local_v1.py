@@ -68,18 +68,18 @@ def check_config(config):
         raise ValueError(f"config.json missing required keys: {missing}")
 
     # Validate extension lists
-    for k in ["raw_file_extensions", "processed_file_extensions", "summarised_file_extensions"]:
-        v = config[k]
-        if not isinstance(v, list) or len(v) == 0:
-            raise ValueError(f"config key '{k}' must be a non-empty list")
+    for extension_key in ["raw_file_extensions", "processed_file_extensions", "summarised_file_extensions"]:
+        extension_list = config[extension_key]
+        if not isinstance(extension_list, list) or len(extension_list) == 0:
+            raise ValueError(f"config key '{extension_key}' must be a non-empty list")
         # Optional: ensure list entries are strings (still minimal)
-        for ext in v:
-            if not isinstance(ext, str):
-                raise ValueError(f"config key '{k}' must contain only strings (invalid: {ext})")
+        for extension_string in extension_list:
+            if not isinstance(extension_string, str):
+                raise ValueError(f"config key '{extension_key}' must contain only strings (invalid: {extension_string})")
 
     # Validate mapping
-    m = config["patient_sample_mapping"]
-    if not isinstance(m, dict) or len(m) == 0:
+    mapping_dict = config["patient_sample_mapping"]
+    if not isinstance(mapping_dict, dict) or len(mapping_dict) == 0:
         raise ValueError("config key 'patient_sample_mapping' must be a non-empty dictionary")
 
     return config
@@ -104,19 +104,19 @@ def extract_sample_ids_from_counts_file(file_path: Path, sample_id_regex: re.Pat
 
             header = next(reader, [])
             for cell in header:
-                m = sample_id_regex.search(str(cell))
-                if m:
-                    matches.add(m.group())
+                regex_match = sample_id_regex.search(str(cell))
+                if regex_match:
+                    matches.add(regex_match.group())
 
             # Scan first column of up to first 100 rows (performance bound)
-            for i, row in enumerate(reader):
-                if i >= 100:
+            for row_index, row in enumerate(reader):
+                if row_index >= 100:
                     break
                 if not row:
                     continue
-                m = sample_id_regex.search(str(row[0]))
-                if m:
-                    matches.add(m.group())
+                regex_match = sample_id_regex.search(str(row[0]))
+                if regex_match:
+                    matches.add(regex_match.group())
 
     except Exception:
         return []
@@ -214,14 +214,14 @@ def extract_file_metadata(directory, file_path_dict, file_type, config):
             if file_type == "summarised":
                 found_ids = extract_sample_ids_from_counts_file(full_path, all_sample_ids)
                 if found_ids:
-                    for sid in found_ids:
-                        pid = patient_sample_mapping.get(sid, "")
-                        unique_key = f"{file_path}-{sid}"
+                    for extracted_sample_id in found_ids:
+                        mapped_patient_id = patient_sample_mapping.get(extracted_sample_id, "")
+                        unique_key = f"{file_path}-{extracted_sample_id}"
                         metadata_dict_by_path[unique_key] = {
                             "file_name": file_name,
                             "file_size": file_size,
-                            "patient_id": pid,
-                            "sample_id": sid,
+                            "patient_id": mapped_patient_id,
+                            "sample_id": extracted_sample_id,
                             "directory": file_path
                         }
                     # We have recorded metadata entries for this file (per sid), so skip the default path
