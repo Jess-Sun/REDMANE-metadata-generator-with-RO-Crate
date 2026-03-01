@@ -63,7 +63,7 @@ def check_config(config):
         "summarised_file_extensions",
         "patient_sample_mapping",
     ]
-    missing = [k for k in required if k not in config]
+    missing = [req_key for req_key in required if req_key not in config]
     if missing:
         raise ValueError(f"config.json missing required keys: {missing}")
 
