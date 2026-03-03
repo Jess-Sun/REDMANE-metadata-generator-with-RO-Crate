@@ -214,17 +214,17 @@ def extract_file_metadata(directory, file_path_dict, file_type, config):
             if file_type == "summarised":
                 found_ids = extract_sample_ids_from_counts_file(full_path, all_sample_ids)
                 if found_ids:
-                    for extracted_sample_id in found_ids:
-                        mapped_patient_id = patient_sample_mapping.get(extracted_sample_id, "")
-                        unique_key = f"{file_path}-{extracted_sample_id}"
-                        metadata_dict_by_path[unique_key] = {
-                            "file_name": file_name,
-                            "file_size": file_size,
-                            "patient_id": mapped_patient_id,
-                            "sample_id": extracted_sample_id,
-                            "directory": file_path
-                        }
-                    # We have recorded metadata entries for this file (per sid), so skip the default path
+                    sorted_ids = sorted(found_ids)
+                    mapped_patient_ids = [patient_sample_mapping.get(sid, "") for sid in sorted_ids]
+                    metadata_dict_by_path[file_path] = {
+                        "file_name": file_name,
+                        "file_size": file_size,
+                        "patient_id": mapped_patient_ids,
+                        "sample_id": sorted_ids,
+                        "directory": file_path
+                    }
+                    print(f" | {file_path}  ~{file_size}{file_size_unit}")
+                    # We have recorded metadata entries for this file, so skip the default path
                     continue
 
             print("SampleID NOT FOUND for file:", file_name)
