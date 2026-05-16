@@ -3,6 +3,7 @@ import os
 import json
 import re
 from pathlib import Path
+import csv
 from generate_html import generate_html_from_json
 
 
@@ -48,6 +49,79 @@ def load_json(file_path):
     with open(file_path, "r") as f:
         data = json.load(f)
     return data
+
+
+def check_config(config):
+    """
+    Validate config.json has required keys and expected types.
+    Raises ValueError on any invalid/missing config (fail loudly).
+    Returns the normalized config dict.
+    """
+    required = [
+        "raw_file_extensions",
+        "processed_file_extensions",
+        "summarised_file_extensions",
+        "patient_sample_mapping",
+    ]
+    missing = [req_key for req_key in required if req_key not in config]
+    if missing:
+        raise ValueError(f"config.json missing required keys: {missing}")
+
+    # Validate extension lists
+    for extension_key in ["raw_file_extensions", "processed_file_extensions", "summarised_file_extensions"]:
+        extension_list = config[extension_key]
+        if not isinstance(extension_list, list) or len(extension_list) == 0:
+            raise ValueError(f"config key '{extension_key}' must be a non-empty list")
+        # Optional: ensure list entries are strings (still minimal)
+        for extension_string in extension_list:
+            if not isinstance(extension_string, str):
+                raise ValueError(f"config key '{extension_key}' must contain only strings (invalid: {extension_string})")
+
+    # Validate mapping
+    mapping_dict = config["patient_sample_mapping"]
+    if not isinstance(mapping_dict, dict) or len(mapping_dict) == 0:
+        raise ValueError("config key 'patient_sample_mapping' must be a non-empty dictionary")
+
+    return config
+
+
+def extract_sample_ids_from_counts_file(file_path: Path, sample_id_regex: re.Pattern) -> list[str]:
+    """
+    Scan a CSV/TSV file for sample IDs in the header row and first column.
+    Returns a list of matching sample IDs (deduplicated).
+    Only supports .csv and .tsv.
+    """
+    matches: set[str] = set()
+    suffix = file_path.suffix.lower()
+    if suffix not in (".csv", ".tsv"):
+        return []
+
+    delimiter = "\t" if suffix == ".tsv" else ","
+
+    try:
+        with open(file_path, "r", newline="") as f:
+            reader = csv.reader(f, delimiter=delimiter)
+
+            header = next(reader, [])
+            for cell in header:
+                regex_match = sample_id_regex.search(str(cell))
+                if regex_match:
+                    matches.add(regex_match.group())
+
+            # Scan first column of up to first 100 rows (performance bound)
+            for row_index, row in enumerate(reader):
+                if row_index >= 100:
+                    break
+                if not row:
+                    continue
+                regex_match = sample_id_regex.search(str(row[0]))
+                if regex_match:
+                    matches.add(regex_match.group())
+
+    except Exception:
+        return []
+
+    return list(matches)
 
 
 def find_files_via_extensions(directory, config):
@@ -134,8 +208,25 @@ def extract_file_metadata(directory, file_path_dict, file_type, config):
         
         # Regex matching of sampleID and patientID to file name
         match = all_sample_ids.search(file_name)
-        # Flag files where sampleID cannot be found in mapping within config.json
+
+        # If no regex match in filename, attempt to detect sample IDs inside counts files
         if not match:
+            if file_type == "summarised":
+                found_ids = extract_sample_ids_from_counts_file(full_path, all_sample_ids)
+                if found_ids:
+                    sorted_ids = sorted(found_ids)
+                    mapped_patient_ids = [patient_sample_mapping.get(sid, "") for sid in sorted_ids]
+                    metadata_dict_by_path[file_path] = {
+                        "file_name": file_name,
+                        "file_size": file_size,
+                        "patient_id": mapped_patient_ids,
+                        "sample_id": sorted_ids,
+                        "directory": file_path
+                    }
+                    print(f" | {file_path}  ~{file_size}{file_size_unit}")
+                    # We have recorded metadata entries for this file, so skip the default path
+                    continue
+
             print("SampleID NOT FOUND for file:", file_name)
             continue
         sample_id = match.group()
@@ -178,6 +269,7 @@ def generate_json(directory, output_file):
   
     # Load config information from the provided config file.
     config = load_json(directory / "config.json")
+    config = check_config(config)
     validate_directory_match(config, directory)
 
     raw_file_extensions = config["raw_file_extensions"]
