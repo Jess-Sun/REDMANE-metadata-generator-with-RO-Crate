@@ -147,7 +147,66 @@
                     "directory": "./Processed/XY010-AGRF.bam"
                 }
             ],
-            "summarised": []
+            "summarised": [
+                {
+                    "file_name": "counts_dataset1.csv",
+                    "file_size": 3,
+                    "patient_id": [
+                        "PatientID001_DiseaseX",
+                        "PatientID002_DiseaseX",
+                        "PatientID003_DiseaseX",
+                        "PatientID004_DiseaseX",
+                        "PatientID005_DiseaseX",
+                        "PatientID006_DiseaseX",
+                        "PatientID007_DiseaseX",
+                        "PatientID008_DiseaseX",
+                        "PatientID009_DiseaseX",
+                        "PatientID010_DiseaseX"
+                    ],
+                    "sample_id": [
+                        "XY001",
+                        "XY002",
+                        "XY003",
+                        "XY004",
+                        "XY005",
+                        "XY006",
+                        "XY007",
+                        "XY008",
+                        "XY009",
+                        "XY010"
+                    ],
+                    "directory": "./Summarised/counts_dataset1.csv"
+                },
+                {
+                    "file_name": "counts_dataset2.csv",
+                    "file_size": 3,
+                    "patient_id": [
+                        "PatientID001_DiseaseX",
+                        "PatientID002_DiseaseX",
+                        "PatientID003_DiseaseX",
+                        "PatientID004_DiseaseX",
+                        "PatientID005_DiseaseX",
+                        "PatientID006_DiseaseX",
+                        "PatientID007_DiseaseX",
+                        "PatientID008_DiseaseX",
+                        "PatientID009_DiseaseX",
+                        "PatientID010_DiseaseX"
+                    ],
+                    "sample_id": [
+                        "XY001",
+                        "XY002",
+                        "XY003",
+                        "XY004",
+                        "XY005",
+                        "XY006",
+                        "XY007",
+                        "XY008",
+                        "XY009",
+                        "XY010"
+                    ],
+                    "directory": "./Summarised/counts_dataset2.csv"
+                }
+            ]
         }
     }
 }

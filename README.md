@@ -1,7 +1,7 @@
 # REDMANE-metadata-generator
 *Created by REDMANE Data Ingestion Team Summer 2025*  
 *Updated by REDMANE Data Ingestion Team 2025 sem1*  
-*Updated by REDMANE Data INgestion Team Summer 2026*
+*Updated by REDMANE Data Ingestion Team Summer 2026*
 
 A Python tool for finding files with certain extensions (specified in config file) and extracting metadata such as file name, file size and path. It also maps sampleID and patientID to the file if the mapping is supplied in the config file. It structures the summarised metadata into an output json and html preview. 
 
@@ -11,11 +11,19 @@ This project helps automate the ingestion of metadata associated with research d
 
 
 ## Project Structure
+```text
+REDMANE-metadata-generator-with-RO-Crate/
+├── .github/workflows/ci.yml   # GitHub Actions workflow for automated testing
+├── test_counts/               # Synthetic test dataset containing raw, processed, and summarised files
+├── test_imaging/              # Synthetic imaging test dataset containing raw, processed, and summarised files
+├── test_WGS/                  # Synthetic whole genome sequencing (WGS) test dataset
+├── tests/                     # Unit tests validating core functionality
+├── generate_html.py           # Generates an HTML report from structured JSON summaries
+├── pytest.ini                 # Pytest configuration and test discovery settings
+├── update_local_v1.py         # Main metadata extraction and organisation pipeline
+└── README.md
+```
 
-- `test_imaging/` – Directory containing test synthetic data categorized as raw, processed, or summarized.
-- `test_WGS/` – Directory containing test synthetic data categorized as raw, processed, or summarized.
-- `generate_html.py` – Builds a HTML report from the structured JSON summary.
-- `update_local_v1.py` – Main script responsible for scanning files, extracting, associating and organising metadata.
 
 ## Usage
 
@@ -40,13 +48,9 @@ Output: (see test_imaging or test_WGS for examples)
 - output.json (to be uploaded to data registry)
 - output.html
 
-To run with the included synthetic test data:
+E.g. to run with an included synthetic test data:
 ```bash
 python update_local_v1.py ./test_imaging
-```
-or
-```bash
-python update_local_v1.py ./test_WGS
 ```
 
 ## Requirements
@@ -54,8 +58,17 @@ python update_local_v1.py ./test_WGS
 - Python 3.x
 - JSON, OS, RE, PATHLIB modules (included in Python standard library)
 
+## Development Requirements
+- PYTEST for automated unit testing and continuous integration validation
+
+## Branching Strategy for Future Cohorts
+- Cut a branch for your intake off main 
+- Create new branches when features are added, removed or for large refactors
+- Have branches for performing merges in
+
 ## Future Improvements
 
 - Implement logging for better debugging and error tracking.
 - Enable parallel processing to handle large datasets efficiently.
-- Expand file handling to support additional research data formats such as counts data where sampleID is within the file rather than in the file name.
+- Expand file handling to support additional research data formats.
+- Create Python and R packages for easy install. 
