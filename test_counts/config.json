@@ -1,5 +1,5 @@
 {
-  "directory": "test_WGS",
+  "directory": "test_counts",
   "raw_file_extensions": [
     ".fastq"
   ],
@@ -7,7 +7,7 @@
     ".bam"
   ],
   "summarised_file_extensions": [
-    ".vcf"
+    ".csv"
   ],
   "patient_sample_mapping": {
   "XY001": "PatientID001_DiseaseX",
