@@ -78,4 +78,4 @@ python update_local_v1.py ./test_imaging
 - Rename repository to remove RO-CRATE which has been discontinued. 
 
 ### Notes
-Repository was filtered to remove tracking of large files, if you have cloned the repository before you may need to reclone. 
+Repository was filtered and commit history rewritten to remove tracking of large files, if you have cloned the repository before you may need to reclone. 
